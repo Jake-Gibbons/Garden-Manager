@@ -6,7 +6,16 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../views'));
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, '../public')));
+
+// Serve static files; ensure the service worker is never cached so browsers
+// always fetch the latest version.
+app.use(express.static(path.join(__dirname, '../public'), {
+  setHeaders(res, filePath) {
+    if (filePath.endsWith('sw.js')) {
+      res.set('Cache-Control', 'no-cache');
+    }
+  }
+}));
 
 const indexRouter = require('./routes/index');
 const plantsRouter = require('./routes/plants');
