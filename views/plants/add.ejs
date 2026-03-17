@@ -1,0 +1,36 @@
+<%- include('../partials/header') %>
+<h1>Add Plant</h1>
+<form method="POST" action="/plants/add">
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" required>
+  </div>
+  <div class="form-group">
+    <label for="type">Type</label>
+    <select id="type" name="type">
+      <option value="vegetable">Vegetable</option>
+      <option value="flower">Flower</option>
+      <option value="herb">Herb</option>
+      <option value="other">Other</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="cultivation">Cultivation</label>
+    <select id="cultivation" name="cultivation">
+      <option value="outdoor">Outdoor</option>
+      <option value="indoor">Indoor</option>
+      <option value="greenhouse">Greenhouse</option>
+      <option value="other">Other</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="planting_date">Planting Date</label>
+    <input type="date" id="planting_date" name="planting_date" required>
+  </div>
+  <div class="form-group">
+    <label for="notes">Notes</label>
+    <textarea id="notes" name="notes"></textarea>
+  </div>
+  <button type="submit" class="btn">Add Plant</button>
+</form>
+<%- include('../partials/footer') %>

@@ -1,0 +1,15 @@
+<%- include('partials/header') %>
+<h1>Welcome to Garden Manager</h1>
+<div class="cards">
+  <div class="card">
+    <h2>Plants</h2>
+    <p class="count"><%= plantCount %></p>
+    <a href="/plants">View Plants</a>
+  </div>
+  <div class="card">
+    <h2>Reminders</h2>
+    <p class="count"><%= reminderCount %></p>
+    <a href="/reminders">View Reminders</a>
+  </div>
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,23 @@
+<%- include('../partials/header') %>
+<h1>Reminders</h1>
+<% const sections = [
+  { key: 'water', label: 'Watering' },
+  { key: 'feed', label: 'Feeding' },
+  { key: 'weed', label: 'Weeding' },
+  { key: 'prune', label: 'Pruning' }
+]; %>
+<% sections.forEach(section => { %>
+  <section class="reminder-section">
+    <h2><%= section.label %></h2>
+    <% if (grouped[section.key].length === 0) { %>
+      <p>No <%= section.label.toLowerCase() %> reminders.</p>
+    <% } else { %>
+    <ul>
+      <% grouped[section.key].forEach(r => { %>
+        <li><strong><%= r.plantName %></strong> - Due: <%= r.dueDate %> (every <%= r.frequency %> days)</li>
+      <% }) %>
+    </ul>
+    <% } %>
+  </section>
+<% }) %>
+<%- include('../partials/footer') %>

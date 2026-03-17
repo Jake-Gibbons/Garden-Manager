@@ -1,0 +1,29 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: #f0f7f0; color: #2d4a2d; }
+nav { background: #2d6a2d; padding: 1rem 2rem; display: flex; gap: 1.5rem; }
+nav a { color: #fff; text-decoration: none; font-weight: bold; }
+nav a:hover { text-decoration: underline; }
+main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+h1 { color: #2d6a2d; margin-bottom: 1rem; }
+h2 { color: #3a7a3a; margin-bottom: 0.5rem; }
+.cards { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.card { background: #fff; border: 1px solid #b5d5b5; border-radius: 8px; padding: 1.5rem; min-width: 180px; text-align: center; }
+.card .count { font-size: 2.5rem; font-weight: bold; color: #2d6a2d; margin: 0.5rem 0; }
+.card a { color: #2d6a2d; }
+table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; margin-top: 1rem; }
+th { background: #2d6a2d; color: #fff; padding: 0.75rem 1rem; text-align: left; }
+td { padding: 0.75rem 1rem; border-bottom: 1px solid #e0ede0; }
+tr:last-child td { border-bottom: none; }
+.btn { display: inline-block; background: #2d6a2d; color: #fff; padding: 0.5rem 1.2rem; border-radius: 4px; text-decoration: none; border: none; cursor: pointer; margin-bottom: 1rem; }
+.btn:hover { background: #1e4f1e; }
+.btn-danger { background: #c0392b; color: #fff; padding: 0.4rem 0.9rem; border-radius: 4px; border: none; cursor: pointer; }
+.btn-danger:hover { background: #a93226; }
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; margin-bottom: 0.3rem; font-weight: bold; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.5rem; border: 1px solid #b5d5b5; border-radius: 4px; }
+.form-group textarea { height: 80px; }
+.reminder-section { background: #fff; border: 1px solid #b5d5b5; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.reminder-section ul { list-style: none; }
+.reminder-section li { padding: 0.4rem 0; border-bottom: 1px solid #e0ede0; }
+.reminder-section li:last-child { border-bottom: none; }
+footer { text-align: center; padding: 1rem; color: #888; margin-top: 2rem; }
