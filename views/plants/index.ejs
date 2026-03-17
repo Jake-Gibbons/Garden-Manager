@@ -1,0 +1,31 @@
+<%- include('../partials/header') %>
+<h1>My Plants</h1>
+<a href="/plants/add" class="btn">Add Plant</a>
+<% if (plants.length === 0) { %>
+  <p>No plants yet. <a href="/plants/add">Add one!</a></p>
+<% } else { %>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th><th>Type</th><th>Cultivation</th><th>Planting Date</th><th>Notes</th><th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% plants.forEach(plant => { %>
+    <tr>
+      <td><%= plant.name %></td>
+      <td><%= plant.type %></td>
+      <td><%= plant.cultivation %></td>
+      <td><%= plant.planting_date %></td>
+      <td><%= plant.notes %></td>
+      <td>
+        <form method="POST" action="/plants/<%= plant.id %>/delete">
+          <button type="submit" class="btn-danger">Delete</button>
+        </form>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+<% } %>
+<%- include('../partials/footer') %>
