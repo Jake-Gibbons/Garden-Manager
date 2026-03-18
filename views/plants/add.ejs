@@ -1,40 +1,160 @@
 <%- include('../partials/header') %>
 <h1 class="mb-4">Add Plant</h1>
-<div class="card shadow-sm" style="max-width:540px;">
-  <div class="card-body">
-    <form method="POST" action="/plants/add">
-      <div class="mb-3">
-        <label for="name" class="form-label fw-bold">Name</label>
-        <input type="text" class="form-control" id="name" name="name" required>
+<div class="row g-4">
+  <!-- Add-plant form -->
+  <div class="col-12 col-md-7">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <form method="POST" action="/plants/add">
+          <div class="mb-3">
+            <label for="name" class="form-label fw-bold">Name</label>
+            <input type="text" class="form-control" id="name" name="name" required
+                   placeholder="e.g. Cherry Tomato">
+          </div>
+          <div class="mb-3">
+            <label for="type" class="form-label fw-bold">Type</label>
+            <select class="form-select" id="type" name="type">
+              <% plantTypeOptions.forEach(opt => { %>
+                <option value="<%= opt.value %>"><%= opt.label %></option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="cultivation" class="form-label fw-bold">Cultivation</label>
+            <select class="form-select" id="cultivation" name="cultivation">
+              <option value="outdoor">Outdoor</option>
+              <option value="indoor">Indoor</option>
+              <option value="greenhouse">Greenhouse</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="planting_date" class="form-label fw-bold">Planting Date</label>
+            <input type="date" class="form-control" id="planting_date" name="planting_date" required>
+          </div>
+          <div class="mb-3">
+            <label for="notes" class="form-label fw-bold">Notes</label>
+            <textarea class="form-control" id="notes" name="notes" rows="3"
+                      placeholder="Optional notes about this plant"></textarea>
+          </div>
+          <button type="submit" class="btn btn-success">Add Plant</button>
+        </form>
       </div>
-      <div class="mb-3">
-        <label for="type" class="form-label fw-bold">Type</label>
-        <select class="form-select" id="type" name="type">
-          <option value="vegetable">Vegetable</option>
-          <option value="flower">Flower</option>
-          <option value="herb">Herb</option>
-          <option value="other">Other</option>
-        </select>
+    </div>
+  </div>
+
+  <!-- GBIF species lookup panel -->
+  <div class="col-12 col-md-5">
+    <div class="card shadow-sm">
+      <div class="card-header gm-thead text-white fw-bold">
+        🔍 GBIF Species Lookup
       </div>
-      <div class="mb-3">
-        <label for="cultivation" class="form-label fw-bold">Cultivation</label>
-        <select class="form-select" id="cultivation" name="cultivation">
-          <option value="outdoor">Outdoor</option>
-          <option value="indoor">Indoor</option>
-          <option value="greenhouse">Greenhouse</option>
-          <option value="other">Other</option>
-        </select>
+      <div class="card-body">
+        <p class="small text-muted mb-2">
+          Search the <a href="https://www.gbif.org" target="_blank" rel="noopener">
+          Global Biodiversity Information Facility (GBIF)</a> checklist for
+          scientific classification and taxonomy of your plant.
+        </p>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" id="gbif-query"
+                 placeholder="e.g. tomato, Rosa, apple">
+          <button class="btn btn-outline-success" id="gbif-search-btn" type="button">Search</button>
+        </div>
+        <div id="gbif-results"></div>
       </div>
-      <div class="mb-3">
-        <label for="planting_date" class="form-label fw-bold">Planting Date</label>
-        <input type="date" class="form-control" id="planting_date" name="planting_date" required>
-      </div>
-      <div class="mb-3">
-        <label for="notes" class="form-label fw-bold">Notes</label>
-        <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
-      </div>
-      <button type="submit" class="btn btn-success">Add Plant</button>
-    </form>
+    </div>
   </div>
 </div>
+
+<script>
+(function () {
+  const searchBtn = document.getElementById('gbif-search-btn');
+  const queryInput = document.getElementById('gbif-query');
+  const resultsEl = document.getElementById('gbif-results');
+
+  // Species data is stored in memory, keyed by a sequential index written
+  // to each button's data-species-index attribute.  This avoids placing
+  // arbitrary JSON inside an onclick attribute (XSS risk).
+  const speciesCache = [];
+
+  function escHtml(str) {
+    if (typeof str !== 'string') return str;
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function renderOptionalField(label, value) {
+    if (!value) return '';
+    return `<div>${escHtml(label)}: <span class="text-success">${escHtml(value)}</span></div>`;
+  }
+
+  function renderResults(results) {
+    if (!results.length) {
+      resultsEl.innerHTML = '<p class="text-muted small">No species found. Try a different name.</p>';
+      return;
+    }
+    speciesCache.length = 0; // clear previous search
+    const items = results.map((r, idx) => {
+      speciesCache.push(r);
+      return `
+        <div class="border rounded p-2 mb-2 small">
+          <div class="fw-bold">${escHtml(r.canonicalName || r.scientificName)}</div>
+          <div class="text-muted fst-italic">${escHtml(r.scientificName)}</div>
+          ${renderOptionalField('Family', r.family)}
+          ${renderOptionalField('Kingdom', r.kingdom)}
+          <button type="button" class="btn btn-sm btn-outline-secondary mt-1 gbif-use-btn"
+                  data-species-index="${idx}">
+            Use this name
+          </button>
+        </div>`;
+    }).join('');
+    resultsEl.innerHTML = items;
+  }
+
+  function useSpecies(species) {
+    const nameField = document.getElementById('name');
+    if (nameField && species.canonicalName) {
+      nameField.value = species.canonicalName;
+    }
+    const notesField = document.getElementById('notes');
+    if (notesField) {
+      const parts = [];
+      if (species.scientificName) parts.push('Scientific name: ' + species.scientificName);
+      if (species.family) parts.push('Family: ' + species.family);
+      if (species.kingdom) parts.push('Kingdom: ' + species.kingdom);
+      if (notesField.value) parts.unshift(notesField.value);
+      notesField.value = parts.join('\n');
+    }
+  }
+
+  // Use event delegation on the results container so we never need inline onclick handlers.
+  resultsEl.addEventListener('click', function (e) {
+    const btn = e.target.closest('.gbif-use-btn');
+    if (!btn) return;
+    const idx = parseInt(btn.dataset.speciesIndex, 10);
+    if (!isNaN(idx) && speciesCache[idx]) {
+      useSpecies(speciesCache[idx]);
+    }
+  });
+
+  async function doSearch() {
+    const q = queryInput.value.trim();
+    if (!q) return;
+    resultsEl.innerHTML = '<p class="text-muted small">Searching GBIF…</p>';
+    try {
+      const resp = await fetch('/plants/lookup?q=' + encodeURIComponent(q));
+      const data = await resp.json();
+      if (data.error) {
+        resultsEl.innerHTML = `<p class="text-danger small">${escHtml(data.error)}</p>`;
+      } else {
+        renderResults(data.results || []);
+      }
+    } catch (e) {
+      resultsEl.innerHTML = '<p class="text-danger small">Lookup failed. Check your connection.</p>';
+    }
+  }
+
+  searchBtn.addEventListener('click', doSearch);
+  queryInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
+}());
+</script>
 <%- include('../partials/footer') %>
