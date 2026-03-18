@@ -24,27 +24,41 @@
   </div>
 </section>
 
+<h1 class="mb-4">Reminders</h1>
 <% const sections = [
-  { key: 'water', label: 'Watering' },
-  { key: 'feed', label: 'Feeding' },
-  { key: 'weed', label: 'Weeding' },
-  { key: 'prune', label: 'Pruning' }
+  { key: 'water', label: 'Watering', icon: '💧' },
+  { key: 'feed',  label: 'Feeding',  icon: '🌿' },
+  { key: 'weed',  label: 'Weeding',  icon: '🌾' },
+  { key: 'prune', label: 'Pruning',  icon: '✂️' }
 ]; %>
+<<<<<<< HEAD
 <section id="listView" class="reminder-grid">
+=======
+<div class="row g-3">
+>>>>>>> origin/copilot/add-readme-and-plant-database
 <% sections.forEach(section => { %>
-  <section class="reminder-section">
-    <h2><%= section.label %></h2>
-    <% if (grouped[section.key].length === 0) { %>
-      <p>No <%= section.label.toLowerCase() %> reminders.</p>
-    <% } else { %>
-    <ul>
-      <% grouped[section.key].forEach(r => { %>
-        <li><strong><%= r.plantName %></strong> - Due: <%= r.dueDate %> (every <%= r.frequency %> days)</li>
-      <% }) %>
-    </ul>
-    <% } %>
-  </section>
+  <div class="col-md-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header fw-bold"><%= section.icon %> <%= section.label %></div>
+      <div class="card-body">
+        <% if (grouped[section.key].length === 0) { %>
+          <p class="text-muted mb-0">No <%= section.label.toLowerCase() %> reminders.</p>
+        <% } else { %>
+        <ul class="list-group list-group-flush">
+          <% grouped[section.key].forEach(r => { %>
+            <li class="list-group-item px-0">
+              <strong><%= r.plantName %></strong>
+              <span class="badge bg-success ms-2">Due: <%= r.dueDate %></span>
+              <small class="text-muted d-block">Every <%= r.frequency %> days</small>
+            </li>
+          <% }) %>
+        </ul>
+        <% } %>
+      </div>
+    </div>
+  </div>
 <% }) %>
+<<<<<<< HEAD
 </section>
 
 <section id="calendarView" class="panel hidden" aria-label="Calendar view of reminders">
@@ -240,4 +254,7 @@
     renderCalendar(activeMonth);
   });
 </script>
+=======
+</div>
+>>>>>>> origin/copilot/add-readme-and-plant-database
 <%- include('../partials/footer') %>

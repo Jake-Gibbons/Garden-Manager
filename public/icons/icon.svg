@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background rounded square -->
+  <rect width="512" height="512" rx="80" fill="#2d6a2d"/>
+  <!-- Stem -->
+  <rect x="240" y="240" width="32" height="160" rx="12" fill="#a5d6a7"/>
+  <!-- Left leaf -->
+  <ellipse cx="195" cy="290" rx="65" ry="32" transform="rotate(-30 195 290)" fill="#81c784"/>
+  <!-- Right leaf -->
+  <ellipse cx="317" cy="290" rx="65" ry="32" transform="rotate(30 317 290)" fill="#66bb6a"/>
+  <!-- Flower centre -->
+  <circle cx="256" cy="208" r="48" fill="#fdd835"/>
+  <circle cx="256" cy="208" r="30" fill="#f9a825"/>
+  <!-- Flower pot rim -->
+  <rect x="200" y="395" width="112" height="16" rx="8" fill="#6d4c41"/>
+  <!-- Flower pot body -->
+  <path d="M196 411 l20 50 h80 l20-50 Z" fill="#795548"/>
+</svg>

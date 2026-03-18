@@ -82,6 +82,59 @@ describe('Plant Model', () => {
     expect(plants.find(p => p.id === plant.id)).toBeUndefined();
   });
 
+  // --- Expanded plant type tests ---
+
+  test('getReminders includes prune for fruit plants', () => {
+    plantModel.addPlant({ name: 'Apple', type: 'fruit', cultivation: 'outdoor', planting_date: '2024-03-01', notes: '' });
+    const types = plantModel.getReminders().map(r => r.type);
+    expect(types).toContain('prune');
+  });
+
+  test('getReminders includes prune for tree plants with 60-day frequency', () => {
+    plantModel.addPlant({ name: 'Oak', type: 'tree', cultivation: 'outdoor', planting_date: '2024-03-01', notes: '' });
+    const reminders = plantModel.getReminders();
+    const pruneReminder = reminders.find(r => r.type === 'prune');
+    expect(pruneReminder).toBeDefined();
+    expect(pruneReminder.frequency).toBe(60);
+  });
+
+  test('getReminders includes prune for shrub plants with 45-day frequency', () => {
+    plantModel.addPlant({ name: 'Hydrangea', type: 'shrub', cultivation: 'outdoor', planting_date: '2024-03-01', notes: '' });
+    const reminders = plantModel.getReminders();
+    const pruneReminder = reminders.find(r => r.type === 'prune');
+    expect(pruneReminder).toBeDefined();
+    expect(pruneReminder.frequency).toBe(45);
+  });
+
+  test('getReminders does not include weed for herb plants even when outdoor', () => {
+    plantModel.addPlant({ name: 'Rosemary', type: 'herb', cultivation: 'outdoor', planting_date: '2024-03-01', notes: '' });
+    const types = plantModel.getReminders().map(r => r.type);
+    expect(types).not.toContain('weed');
+  });
+
+  test('getReminders includes weed for grass plants outdoor', () => {
+    plantModel.addPlant({ name: 'Lawn', type: 'grass', cultivation: 'outdoor', planting_date: '2024-03-01', notes: '' });
+    const types = plantModel.getReminders().map(r => r.type);
+    expect(types).toContain('weed');
+  });
+
+  test('getReminders uses longer watering interval for succulent plants', () => {
+    plantModel.addPlant({ name: 'Aloe', type: 'succulent', cultivation: 'outdoor', planting_date: '2024-03-01', notes: '' });
+    const reminders = plantModel.getReminders();
+    const waterReminder = reminders.find(r => r.type === 'water');
+    // outdoor base = 2, succulent modifier = +5 → frequency = 7
+    expect(waterReminder.frequency).toBe(7);
+  });
+
+  test('addPlant accepts all expanded plant types', () => {
+    const types = ['vegetable', 'fruit', 'flower', 'herb', 'tree', 'shrub', 'grass', 'fern', 'succulent', 'cactus', 'bulb', 'climber', 'other'];
+    types.forEach(type => {
+      const plant = plantModel.addPlant({ name: `Test ${type}`, type, cultivation: 'outdoor', planting_date: '2024-03-01', notes: '' });
+      expect(plant.type).toBe(type);
+    });
+    expect(plantModel.getAllPlants().length).toBe(types.length);
+  });
+
   test('updatePlant updates care and safety details', () => {
     const plant = plantModel.addPlant({
       name: 'Lavender',

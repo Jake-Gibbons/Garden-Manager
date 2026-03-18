@@ -24,4 +24,25 @@
     <a href="/reminders">Open Reminders</a>
   </article>
 </section>
+<h1 class="mb-4">Welcome to Garden Manager</h1>
+<div class="row g-3">
+  <div class="col-sm-6">
+    <div class="card h-100 text-center shadow-sm">
+      <div class="card-body">
+        <h2 class="card-title h4">Plants</h2>
+        <p class="display-4 fw-bold gm-count my-3"><%= plantCount %></p>
+        <a href="/plants" class="btn btn-success">View Plants</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="card h-100 text-center shadow-sm">
+      <div class="card-body">
+        <h2 class="card-title h4">Reminders</h2>
+        <p class="display-4 fw-bold gm-count my-3"><%= reminderCount %></p>
+        <a href="/reminders" class="btn btn-success">View Reminders</a>
+      </div>
+    </div>
+  </div>
+</div>
 <%- include('partials/footer') %>
