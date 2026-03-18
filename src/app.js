@@ -1,11 +1,21 @@
 const express = require('express');
 const path = require('path');
+const os = require('os');
 const app = express();
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../views'));
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, '../public')));
+
+// Serve static files; ensure the service worker is never cached so browsers
+// always fetch the latest version.
+app.use(express.static(path.join(__dirname, '../public'), {
+  setHeaders(res, filePath) {
+    if (filePath.endsWith('sw.js')) {
+      res.set('Cache-Control', 'no-cache');
+    }
+  }
+}));
 
 const indexRouter = require('./routes/index');
 const plantsRouter = require('./routes/plants');
@@ -16,7 +26,19 @@ app.use('/plants', plantsRouter);
 app.use('/reminders', remindersRouter);
 
 if (require.main === module) {
-  app.listen(3000, () => console.log('Garden Manager running on http://localhost:3000'));
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, '0.0.0.0', () => {
+    const networkInterfaces = os.networkInterfaces();
+    const localIp = Object.values(networkInterfaces)
+      .flat()
+      .find(iface => iface.family === 'IPv4' && !iface.internal);
+
+    console.log(`Garden Manager running on http://localhost:${PORT}`);
+    if (localIp) {
+      console.log(`On your local network (phone/tablet): http://${localIp.address}:${PORT}`);
+      console.log('Make sure your device is on the same Wi-Fi network.');
+    }
+  });
 }
 
 module.exports = app;
