@@ -1,3 +1,5 @@
+const { PLANT_TYPES } = require('../data/plantTypes');
+
 function createPlantModel(db) {
   function getAllPlants() {
     return db.prepare('SELECT * FROM plants ORDER BY created_at DESC').all();
@@ -24,7 +26,13 @@ function createPlantModel(db) {
     const reminders = [];
 
     plants.forEach(plant => {
-      const waterFreq = { outdoor: 2, indoor: 3, greenhouse: 1 }[plant.cultivation] || 2;
+      const typeMeta = PLANT_TYPES[plant.type] || PLANT_TYPES.other;
+
+      // Base watering frequency (days) by cultivation method
+      const baseWaterFreq = { outdoor: 2, indoor: 3, greenhouse: 1 }[plant.cultivation] || 2;
+      // Apply per-type modifier (succulents/cacti need less water; ferns/grass need more)
+      const waterFreq = Math.max(1, baseWaterFreq + (typeMeta.waterFreqModifier || 0));
+
       const dueDate = (freq) =>
         new Date(new Date(plant.planting_date).getTime() + freq * 24 * 60 * 60 * 1000)
           .toISOString().split('T')[0];
@@ -32,12 +40,18 @@ function createPlantModel(db) {
       reminders.push({ plantId: plant.id, plantName: plant.name, type: 'water', dueDate: dueDate(waterFreq), frequency: waterFreq });
       reminders.push({ plantId: plant.id, plantName: plant.name, type: 'feed', dueDate: dueDate(14), frequency: 14 });
 
-      if (plant.cultivation === 'outdoor' || plant.cultivation === 'greenhouse') {
+      // Weed reminders only for outdoor/greenhouse plants of weed-sensitive types
+      if (
+        (plant.cultivation === 'outdoor' || plant.cultivation === 'greenhouse') &&
+        typeMeta.weedSensitive
+      ) {
         reminders.push({ plantId: plant.id, plantName: plant.name, type: 'weed', dueDate: dueDate(7), frequency: 7 });
       }
 
-      if (plant.type === 'flower' || plant.type === 'vegetable') {
-        reminders.push({ plantId: plant.id, plantName: plant.name, type: 'prune', dueDate: dueDate(30), frequency: 30 });
+      // Prune reminders for plant types that benefit from pruning
+      if (typeMeta.prune) {
+        const pruneFreq = typeMeta.pruneFreq || 30;
+        reminders.push({ plantId: plant.id, plantName: plant.name, type: 'prune', dueDate: dueDate(pruneFreq), frequency: pruneFreq });
       }
     });
 
