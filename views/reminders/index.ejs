@@ -1,11 +1,36 @@
 <%- include('../partials/header') %>
-<h1>Reminders</h1>
+<section class="page-hero compact">
+  <h1>Care Reminders</h1>
+  <p>Stay ahead of watering, feeding, weeding, and pruning with a clear weekly rhythm.</p>
+</section>
+
+<section class="panel reminder-controls">
+  <div class="toggle-group" role="tablist" aria-label="Reminder view toggle">
+    <button id="showListView" class="btn toggle-btn is-active" type="button" role="tab" aria-selected="true">Current View</button>
+    <button id="showCalendarView" class="btn toggle-btn" type="button" role="tab" aria-selected="false">Calendar View</button>
+  </div>
+
+  <div id="calendarToolbar" class="calendar-toolbar hidden" aria-live="polite">
+    <button id="prevMonthBtn" class="btn btn-secondary" type="button">Previous</button>
+    <h2 id="calendarMonthLabel" class="calendar-month-label">Month</h2>
+    <button id="nextMonthBtn" class="btn btn-secondary" type="button">Next</button>
+  </div>
+
+  <div id="calendarLegend" class="calendar-legend hidden">
+    <span><i class="dot dot-water"></i>Water</span>
+    <span><i class="dot dot-feed"></i>Feed</span>
+    <span><i class="dot dot-weed"></i>Weed</span>
+    <span><i class="dot dot-prune"></i>Prune</span>
+  </div>
+</section>
+
 <% const sections = [
   { key: 'water', label: 'Watering' },
   { key: 'feed', label: 'Feeding' },
   { key: 'weed', label: 'Weeding' },
   { key: 'prune', label: 'Pruning' }
 ]; %>
+<section id="listView" class="reminder-grid">
 <% sections.forEach(section => { %>
   <section class="reminder-section">
     <h2><%= section.label %></h2>
@@ -20,4 +45,199 @@
     <% } %>
   </section>
 <% }) %>
+</section>
+
+<section id="calendarView" class="panel hidden" aria-label="Calendar view of reminders">
+  <div class="calendar-weekdays">
+    <span>Sun</span>
+    <span>Mon</span>
+    <span>Tue</span>
+    <span>Wed</span>
+    <span>Thu</span>
+    <span>Fri</span>
+    <span>Sat</span>
+  </div>
+  <div id="calendarGrid" class="calendar-grid"></div>
+  <section id="calendarDayDetails" class="calendar-day-details">
+    <h2>Selected Day</h2>
+    <p>Click a date with dots to view all reminders for that day.</p>
+  </section>
+</section>
+
+<script>
+  const reminderData = <%- JSON.stringify(reminders) %>;
+
+  const listView = document.getElementById('listView');
+  const calendarView = document.getElementById('calendarView');
+  const showListViewBtn = document.getElementById('showListView');
+  const showCalendarViewBtn = document.getElementById('showCalendarView');
+  const calendarToolbar = document.getElementById('calendarToolbar');
+  const calendarLegend = document.getElementById('calendarLegend');
+  const calendarMonthLabel = document.getElementById('calendarMonthLabel');
+  const calendarGrid = document.getElementById('calendarGrid');
+  const calendarDayDetails = document.getElementById('calendarDayDetails');
+  const prevMonthBtn = document.getElementById('prevMonthBtn');
+  const nextMonthBtn = document.getElementById('nextMonthBtn');
+
+  let activeMonth = new Date();
+
+  function dateKey(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  function groupEventsByDate(events) {
+    return events.reduce((acc, event) => {
+      if (!acc[event.dueDate]) {
+        acc[event.dueDate] = [];
+      }
+      acc[event.dueDate].push(event);
+      return acc;
+    }, {});
+  }
+
+  const eventsByDate = groupEventsByDate(reminderData);
+  let selectedDateKey = null;
+
+  function dotClass(type) {
+    return `dot-${type || 'water'}`;
+  }
+
+  function renderCalendar(monthDate) {
+    const year = monthDate.getFullYear();
+    const month = monthDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const firstWeekday = firstDay.getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    calendarMonthLabel.textContent = monthDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    calendarGrid.innerHTML = '';
+
+    for (let i = 0; i < firstWeekday; i += 1) {
+      const emptyCell = document.createElement('div');
+      emptyCell.className = 'calendar-day is-empty';
+      calendarGrid.appendChild(emptyCell);
+    }
+
+    for (let day = 1; day <= daysInMonth; day += 1) {
+      const date = new Date(year, month, day);
+      const key = dateKey(date);
+      const events = eventsByDate[key] || [];
+
+      const dayCell = document.createElement('div');
+      dayCell.className = 'calendar-day';
+      dayCell.dataset.dateKey = key;
+
+      const dayNumber = document.createElement('span');
+      dayNumber.className = 'calendar-day-number';
+      dayNumber.textContent = day;
+
+      const dotsWrap = document.createElement('div');
+      dotsWrap.className = 'calendar-dots';
+
+      events.slice(0, 4).forEach((event) => {
+        const dot = document.createElement('span');
+        dot.className = `dot ${dotClass(event.type)}`;
+        dot.title = `${event.plantName}: ${event.type} due`;
+        dotsWrap.appendChild(dot);
+      });
+
+      if (events.length > 4) {
+        const more = document.createElement('span');
+        more.className = 'calendar-more';
+        more.textContent = `+${events.length - 4}`;
+        dotsWrap.appendChild(more);
+      }
+
+      if (events.length > 0) {
+        dayCell.title = events.map((event) => `${event.plantName}: ${event.type}`).join('\n');
+      }
+
+      if (selectedDateKey === key) {
+        dayCell.classList.add('is-selected');
+      }
+
+      dayCell.addEventListener('click', () => {
+        if (events.length === 0) {
+          return;
+        }
+        selectedDateKey = key;
+        renderCalendar(activeMonth);
+        renderDayDetails(key, events);
+      });
+
+      dayCell.appendChild(dayNumber);
+      dayCell.appendChild(dotsWrap);
+      calendarGrid.appendChild(dayCell);
+    }
+
+    if (!selectedDateKey) {
+      return;
+    }
+
+    if (!eventsByDate[selectedDateKey]) {
+      calendarDayDetails.innerHTML = '<h2>Selected Day</h2><p>No reminders for this day in the selected month.</p>';
+    }
+  }
+
+  function renderDayDetails(key, events) {
+    const dateText = new Date(`${key}T12:00:00`).toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+
+    const listItems = events
+      .map((event) => `<li><span class="reminder-chip ${dotClass(event.type)}">${event.type}</span><strong>${event.plantName}</strong> every ${event.frequency} days</li>`)
+      .join('');
+
+    calendarDayDetails.innerHTML = `
+      <h2>${dateText}</h2>
+      <ul class="calendar-day-event-list">${listItems}</ul>
+    `;
+  }
+
+  function setListMode() {
+    listView.classList.remove('hidden');
+    calendarView.classList.add('hidden');
+    calendarToolbar.classList.add('hidden');
+    calendarLegend.classList.add('hidden');
+    showListViewBtn.classList.add('is-active');
+    showCalendarViewBtn.classList.remove('is-active');
+    showListViewBtn.setAttribute('aria-selected', 'true');
+    showCalendarViewBtn.setAttribute('aria-selected', 'false');
+  }
+
+  function setCalendarMode() {
+    listView.classList.add('hidden');
+    calendarView.classList.remove('hidden');
+    calendarToolbar.classList.remove('hidden');
+    calendarLegend.classList.remove('hidden');
+    showCalendarViewBtn.classList.add('is-active');
+    showListViewBtn.classList.remove('is-active');
+    showCalendarViewBtn.setAttribute('aria-selected', 'true');
+    showListViewBtn.setAttribute('aria-selected', 'false');
+    renderCalendar(activeMonth);
+
+    if (selectedDateKey && eventsByDate[selectedDateKey]) {
+      renderDayDetails(selectedDateKey, eventsByDate[selectedDateKey]);
+    }
+  }
+
+  showListViewBtn.addEventListener('click', setListMode);
+  showCalendarViewBtn.addEventListener('click', setCalendarMode);
+
+  prevMonthBtn.addEventListener('click', () => {
+    activeMonth = new Date(activeMonth.getFullYear(), activeMonth.getMonth() - 1, 1);
+    renderCalendar(activeMonth);
+  });
+
+  nextMonthBtn.addEventListener('click', () => {
+    activeMonth = new Date(activeMonth.getFullYear(), activeMonth.getMonth() + 1, 1);
+    renderCalendar(activeMonth);
+  });
+</script>
 <%- include('../partials/footer') %>

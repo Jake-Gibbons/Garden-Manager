@@ -1,31 +1,63 @@
 <%- include('../partials/header') %>
-<h1>My Plants</h1>
-<a href="/plants/add" class="btn">Add Plant</a>
+<section class="page-hero compact">
+  <h1>My Plant Collection</h1>
+  <p>Browse your full garden inventory with both common and scientific naming details.</p>
+  <a href="/plants/add" class="btn">Add Plant</a>
+</section>
+
 <% if (plants.length === 0) { %>
-  <p>No plants yet. <a href="/plants/add">Add one!</a></p>
+  <section class="panel empty-state">
+    <p>No plants yet. <a href="/plants/add">Add your first plant profile.</a></p>
+  </section>
 <% } else { %>
+<section class="panel">
 <table>
   <thead>
     <tr>
-      <th>Name</th><th>Type</th><th>Cultivation</th><th>Planting Date</th><th>Notes</th><th>Actions</th>
+      <th>Display Name</th>
+      <th>Common Name</th>
+      <th>Scientific Name</th>
+      <th>Genus</th>
+      <th>Family</th>
+      <th>Type</th>
+      <th>Sunlight</th>
+      <th>Soil Type</th>
+      <th>Pests / Diseases</th>
+      <th>Toxicity / Harm</th>
+      <th>Cultivation</th>
+      <th>Planting Date</th>
+      <th>Notes</th>
+      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
     <% plants.forEach(plant => { %>
     <tr>
       <td><%= plant.name %></td>
+      <td><%= plant.common_name || '-' %></td>
+      <td><%= plant.scientific_name || '-' %></td>
+      <td><%= plant.genus || '-' %></td>
+      <td><%= plant.family || '-' %></td>
       <td><%= plant.type %></td>
+      <td><%= plant.sunlight_preference || '-' %></td>
+      <td><%= plant.soil_type || '-' %></td>
+      <td><%= plant.common_pests_diseases || '-' %></td>
+      <td><%= plant.toxicity || '-' %></td>
       <td><%= plant.cultivation %></td>
       <td><%= plant.planting_date %></td>
-      <td><%= plant.notes %></td>
+      <td><%= plant.notes || '-' %></td>
       <td>
-        <form method="POST" action="/plants/<%= plant.id %>/delete">
-          <button type="submit" class="btn-danger">Delete</button>
-        </form>
+        <div class="action-stack">
+          <a href="/plants/<%= plant.id %>/edit" class="btn btn-secondary">Edit</a>
+          <form method="POST" action="/plants/<%= plant.id %>/delete">
+            <button type="submit" class="btn-danger">Delete</button>
+          </form>
+        </div>
       </td>
     </tr>
     <% }) %>
   </tbody>
 </table>
+</section>
 <% } %>
 <%- include('../partials/footer') %>
