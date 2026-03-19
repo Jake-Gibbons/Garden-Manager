@@ -18,11 +18,13 @@ app.use(express.static(path.join(__dirname, '../public'), {
 }));
 
 const indexRouter = require('./routes/index');
+const gardenPlanRouter = require('./routes/gardenPlan');
 const plantsRouter = require('./routes/plants');
 const remindersRouter = require('./routes/reminders');
 const plantDatabaseRouter = require('./routes/plantDatabase');
 
 app.use('/', indexRouter);
+app.use('/garden-plan', gardenPlanRouter);
 app.use('/plants', plantsRouter);
 app.use('/reminders', remindersRouter);
 app.use('/plant-database', plantDatabaseRouter);

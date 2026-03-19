@@ -1,0 +1,186 @@
+<%- include('../partials/header') %>
+<section class="page-hero compact garden-plan-hero">
+  <p class="eyebrow">Garden Plan Designer</p>
+  <h1>Sketch Your Growing Space</h1>
+  <p class="hero-copy">Draw the outline of your garden, close the shape, then place markers to map out where crops, flowers, compost, and irrigation will live.</p>
+  <div class="hero-actions">
+    <button type="button" class="btn" data-plan-action="close-shape">Close Shape</button>
+    <button type="button" class="btn btn-secondary" data-plan-action="undo-point">Undo Point</button>
+    <button type="button" class="btn btn-secondary" data-plan-action="reset-plan">Reset Plan</button>
+  </div>
+</section>
+
+<section class="garden-plan-layout">
+  <article class="panel garden-plan-sidebar">
+    <div class="garden-plan-section">
+      <h2>1. Draw Outline</h2>
+      <p>Start in outline mode and click around the canvas to mark your garden boundary.</p>
+      <div class="toggle-group" role="group" aria-label="Plan editing mode">
+        <button type="button" class="btn toggle-btn is-active" data-plan-mode="outline">Outline Mode</button>
+        <button type="button" class="btn toggle-btn" data-plan-mode="marker">Marker Mode</button>
+      </div>
+      <p class="garden-plan-hint" id="plan-status">Add at least three points, then close the shape.</p>
+    </div>
+
+    <div class="garden-plan-section">
+      <h2>2. Place Markers</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="marker-type">Marker Type</label>
+          <select id="marker-type" name="markerType">
+            <% markerTypes.forEach((markerType) => { %>
+              <option value="<%= markerType.value %>"><%= markerType.label %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="marker-label">Marker Label</label>
+          <input id="marker-label" name="markerLabel" type="text" maxlength="40" placeholder="Optional custom label">
+        </div>
+      </div>
+      <p class="garden-plan-hint">Switch to marker mode, then click inside the garden shape. Drag markers to reposition them.</p>
+    </div>
+
+    <div class="garden-plan-section">
+      <h2>3. Planned Areas</h2>
+      <div class="garden-plan-summary" id="marker-summary"></div>
+      <ul class="garden-plan-marker-list" id="marker-list"></ul>
+    </div>
+  </article>
+
+  <article class="panel garden-plan-canvas-panel">
+    <div class="garden-plan-canvas-shell">
+      <svg
+        id="garden-plan-canvas"
+        class="garden-plan-canvas"
+        viewBox="0 0 1000 650"
+        role="img"
+        aria-label="Interactive garden planning canvas"
+      >
+        <defs>
+          <pattern id="garden-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(67, 93, 70, 0.12)" stroke-width="1"></path>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="1000" height="650" fill="url(#garden-grid)"></rect>
+        <polygon id="garden-shape" class="garden-plan-shape"></polygon>
+        <polyline id="garden-outline" class="garden-plan-outline"></polyline>
+        <g id="garden-points"></g>
+        <g id="garden-markers"></g>
+      </svg>
+    </div>
+    <div class="garden-plan-legend">
+      <% markerTypes.forEach((markerType) => { %>
+        <span>
+          <i style="background:<%= markerType.color %>"></i>
+          <%= markerType.label %>
+        </span>
+      <% }) %>
+    </div>
+  </article>
+</section>
+
+<script id="garden-plan-marker-types" type="application/json"><%- JSON.stringify(markerTypes) %></script>
+<script src="/js/garden-plan.js"></script>
+<%- include('../partials/footer') %><%- include('../partials/header') %>
+
+<div class="garden-plan-page">
+  <div class="gp-header">
+    <h1 class="gp-title">Garden Plan Designer</h1>
+    <p class="gp-subtitle">Draw your garden shape, then place markers to designate growing areas.</p>
+  </div>
+
+  <div class="gp-layout">
+    <!-- Toolbar -->
+    <aside class="gp-toolbar">
+      <div class="gp-tool-group">
+        <p class="gp-tool-label">Mode</p>
+        <button id="btn-draw" class="gp-tool-btn active" title="Draw garden shape">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 20 2 20"/></svg>
+          Draw Shape
+        </button>
+        <button id="btn-marker" class="gp-tool-btn" title="Place a growing area marker">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="4"/><path d="M12 22s8-6 8-12a8 8 0 1 0-16 0c0 6 8 12 8 12z"/></svg>
+          Add Marker
+        </button>
+        <button id="btn-erase-marker" class="gp-tool-btn" title="Remove a marker">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Erase Marker
+        </button>
+      </div>
+
+      <div class="gp-tool-group">
+        <p class="gp-tool-label">Shape</p>
+        <button id="btn-undo" class="gp-tool-btn" title="Undo last point">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+          Undo Point
+        </button>
+        <button id="btn-close" class="gp-tool-btn" title="Close the shape">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Close Shape
+        </button>
+        <button id="btn-clear" class="gp-tool-btn gp-tool-danger" title="Clear everything">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          Clear All
+        </button>
+      </div>
+
+      <div class="gp-tool-group">
+        <p class="gp-tool-label">Plan</p>
+        <button id="btn-save" class="gp-tool-btn gp-tool-save" title="Save plan to browser">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save Plan
+        </button>
+        <button id="btn-load" class="gp-tool-btn" title="Load saved plan">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 15v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Load Plan
+        </button>
+      </div>
+
+      <div class="gp-hints">
+        <p id="hint-text">Click on the canvas to place points. Double-click to finish the shape.</p>
+      </div>
+    </aside>
+
+    <!-- Canvas -->
+    <div class="gp-canvas-wrap">
+      <canvas id="garden-canvas"></canvas>
+    </div>
+
+    <!-- Marker list -->
+    <aside class="gp-marker-list">
+      <p class="gp-tool-label">Growing Areas</p>
+      <ul id="marker-list" class="gp-markers"></ul>
+      <p id="no-markers" class="gp-no-markers">No markers placed yet.</p>
+    </aside>
+  </div>
+</div>
+
+<!-- Marker modal -->
+<div id="marker-modal" class="gp-modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="gp-modal">
+    <h2 id="modal-title" class="gp-modal-title">Name this growing area</h2>
+    <div class="mb-3">
+      <label for="marker-label" class="form-label">What's growing here?</label>
+      <input id="marker-label" type="text" class="form-control" placeholder="e.g. Tomatoes, Herb bed, Roses…" maxlength="60" autocomplete="off">
+    </div>
+    <div class="mb-3">
+      <label for="marker-color" class="form-label">Marker colour</label>
+      <div class="gp-color-row">
+        <% const colors = ['#e05c2a','#2a8ae0','#2aae60','#c42aae','#e0b02a','#2aaead','#ae2a2a','#6b2ae0']; %>
+        <% colors.forEach(function(c) { %>
+          <button class="gp-color-swatch" data-color="<%= c %>" style="background:<%= c %>;" title="<%= c %>"></button>
+        <% }); %>
+      </div>
+      <input id="marker-color" type="hidden" value="#2a8ae0">
+    </div>
+    <div class="gp-modal-actions">
+      <button id="modal-cancel" class="btn btn-secondary">Cancel</button>
+      <button id="modal-confirm" class="btn btn-success">Place Marker</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/gardenPlan.js"></script>
+
+<%- include('../partials/footer') %>

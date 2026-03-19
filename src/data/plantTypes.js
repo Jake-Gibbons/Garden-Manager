@@ -43,6 +43,15 @@ const PLANT_TYPES = {
     prune: false,
     weedSensitive: false,
   },
+  houseplant: {
+    label: 'Houseplant',
+    description:
+      'Plants commonly grown indoors for foliage, form, or air-cleaning value. ' +
+      'Examples: pothos, fiddle leaf fig, snake plant, philodendron.',
+    waterFreqModifier: 1,
+    prune: false,
+    weedSensitive: false,
+  },
   tree: {
     label: 'Tree',
     description:

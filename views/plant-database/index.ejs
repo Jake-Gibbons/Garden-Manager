@@ -1,7 +1,7 @@
 <%- include('../partials/header') %>
 <section class="page-hero compact">
   <h1>Plant Database</h1>
-  <p>Explore a broader library of plants with taxonomy, care guidance, pests and diseases, and safety notes.</p>
+  <p>Browse a broader plant library with compact cards first, then open detailed care and taxonomy only when you need it.</p>
 </section>
 
 <section class="panel database-controls">
@@ -14,11 +14,9 @@
       <label for="dbType">Type</label>
       <select id="dbType" name="type">
         <option value="all" <%= filters.type === 'all' ? 'selected' : '' %>>All Types</option>
-        <option value="vegetable" <%= filters.type === 'vegetable' ? 'selected' : '' %>>Vegetable</option>
-        <option value="herb" <%= filters.type === 'herb' ? 'selected' : '' %>>Herb</option>
-        <option value="flower" <%= filters.type === 'flower' ? 'selected' : '' %>>Flower</option>
-        <option value="fruit" <%= filters.type === 'fruit' ? 'selected' : '' %>>Fruit</option>
-        <option value="houseplant" <%= filters.type === 'houseplant' ? 'selected' : '' %>>Houseplant</option>
+        <% typeOptions.forEach((option) => { %>
+          <option value="<%= option.value %>" <%= filters.type === option.value ? 'selected' : '' %>><%= option.label %></option>
+        <% }) %>
       </select>
     </div>
     <div class="form-group">
@@ -38,83 +36,19 @@
   <p class="database-summary"><strong><%= pagination.totalResults %></strong> results found. Showing page <strong><%= pagination.currentPage %></strong> of <strong><%= pagination.totalPages %></strong>.</p>
 </section>
 
-<section class="panel database-display-controls">
-  <div class="form-grid three-col">
-    <div class="form-group">
-      <label for="dbViewMode">View Option</label>
-      <select id="dbViewMode">
-        <option value="basic">Basic View</option>
-        <option value="information">Information View</option>
-        <option value="detailed">Detailed View</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="dbCardSize">Card Size</label>
-      <select id="dbCardSize">
-        <option value="compact">Compact</option>
-        <option value="comfortable">Comfortable</option>
-        <option value="expanded">Expanded</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="dbLayoutMode">Layout</label>
-      <select id="dbLayoutMode">
-        <option value="gallery">Gallery</option>
-        <option value="list">List</option>
-      </select>
-    </div>
-  </div>
-</section>
-
-<section id="databaseCards" class="database-grid database-view-detailed database-size-comfortable database-layout-gallery">
+<section id="databaseCards" class="database-grid">
   <% plantDatabase.forEach((plant) => { %>
-    <article
-      class="panel database-card"
-      data-query="<%= plant.scientificName %>">
+    <article class="panel database-card">
+      <a href="/plant-database/<%= encodeURIComponent(plant.id) %>" class="database-card-media-link" aria-label="View details for <%= plant.commonName %>">
+        <img class="database-card-image" src="<%= plant.image %>" alt="<%= plant.imageAlt %>">
+      </a>
       <header class="database-card-head">
         <h2><%= plant.commonName %></h2>
         <p><em><%= plant.scientificName %></em></p>
       </header>
-
-      <div class="database-meta-grid">
-        <p class="database-field database-field-basic"><strong>Type:</strong> <%= plant.type %></p>
-        <p class="database-field database-field-basic"><strong>Genus:</strong> <%= plant.genus %></p>
-        <p class="database-field database-field-basic"><strong>Family:</strong> <%= plant.family %></p>
-        <p class="database-field database-field-information"><strong>Sunlight:</strong> <%= plant.sunlightPreference %></p>
-        <p class="database-field database-field-information"><strong>Soil:</strong> <%= plant.soilType %></p>
-        <p class="database-field database-field-information"><strong>Watering:</strong> <%= plant.wateringNeeds %></p>
-        <p class="database-field database-field-detailed"><strong>Pests/Diseases:</strong> <%= plant.commonPestsDiseases %></p>
-        <p class="database-field database-field-detailed"><strong>Toxicity:</strong> <%= plant.toxicity %></p>
-        <p class="database-field database-field-detailed"><strong>Hardiness:</strong> <%= plant.hardinessZones %></p>
-        <p class="database-field database-field-detailed"><strong>Native Region:</strong> <%= plant.nativeRegion %></p>
-        <p class="database-field database-field-detailed"><strong>Growth Habit:</strong> <%= plant.growthHabit %></p>
-        <p class="database-field database-field-detailed"><strong>Mature Size:</strong> <%= plant.matureSize %></p>
-        <p class="database-field database-field-detailed"><strong>Companion Plants:</strong> <%= plant.companionPlants %></p>
-        <p class="database-field database-field-detailed"><strong>Harvest/Bloom:</strong> <%= plant.harvestSeason %></p>
-      </div>
-
-      <div class="database-actions">
-        <a
-          class="btn"
-          href="/plants/add?template=<%= encodeURIComponent(plant.id) %>">
-          Use In Add Form
-        </a>
-        <button
-          type="button"
-          class="btn btn-secondary enrich-btn"
-          data-query="<%= plant.scientificName %>">
-          Fetch Wikipedia Summary
-        </button>
-        <a
-          class="btn"
-          target="_blank"
-          rel="noreferrer"
-          href="https://www.gbif.org/species/search?q=<%= encodeURIComponent(plant.scientificName) %>">
-          Open GBIF Search
-        </a>
-      </div>
-
-      <div class="api-summary hidden" aria-live="polite"></div>
+      <a class="btn btn-secondary" href="/plant-database/<%= encodeURIComponent(plant.id) %>">
+        More Info
+      </a>
     </article>
   <% }) %>
 </section>
@@ -140,12 +74,7 @@
   const searchInput = document.getElementById('dbSearch');
   const typeSelect = document.getElementById('dbType');
   const sunlightSelect = document.getElementById('dbSunlight');
-  const viewModeSelect = document.getElementById('dbViewMode');
-  const cardSizeSelect = document.getElementById('dbCardSize');
-  const layoutModeSelect = document.getElementById('dbLayoutMode');
-  const databaseCards = document.getElementById('databaseCards');
   const storageKey = 'garden-manager-plant-db-filters';
-  const displayStorageKey = 'garden-manager-plant-db-display';
 
   function currentFilterState() {
     return {
@@ -155,31 +84,8 @@
     };
   }
 
-  function currentDisplayState() {
-    return {
-      viewMode: viewModeSelect.value,
-      cardSize: cardSizeSelect.value,
-      layoutMode: layoutModeSelect.value
-    };
-  }
-
   function persistFilters() {
     localStorage.setItem(storageKey, JSON.stringify(currentFilterState()));
-  }
-
-  function applyDisplayState() {
-    const { viewMode, cardSize, layoutMode } = currentDisplayState();
-    databaseCards.classList.remove('database-view-basic', 'database-view-information', 'database-view-detailed');
-    databaseCards.classList.remove('database-size-compact', 'database-size-comfortable', 'database-size-expanded');
-    databaseCards.classList.remove('database-layout-gallery', 'database-layout-list');
-    databaseCards.classList.add(`database-view-${viewMode}`);
-    databaseCards.classList.add(`database-size-${cardSize}`);
-    databaseCards.classList.add(`database-layout-${layoutMode}`);
-  }
-
-  function persistDisplayState() {
-    localStorage.setItem(displayStorageKey, JSON.stringify(currentDisplayState()));
-    applyDisplayState();
   }
 
   if (!window.location.search) {
@@ -200,51 +106,10 @@
     }
   }
 
-  const savedDisplay = localStorage.getItem(displayStorageKey);
-  if (savedDisplay) {
-    try {
-      const parsedDisplay = JSON.parse(savedDisplay);
-      if (parsedDisplay.viewMode) viewModeSelect.value = parsedDisplay.viewMode;
-      if (parsedDisplay.cardSize) cardSizeSelect.value = parsedDisplay.cardSize;
-      if (parsedDisplay.layoutMode) layoutModeSelect.value = parsedDisplay.layoutMode;
-    } catch (error) {
-      localStorage.removeItem(displayStorageKey);
-    }
-  }
-
-  applyDisplayState();
-
   filtersForm.addEventListener('submit', persistFilters);
   typeSelect.addEventListener('change', persistFilters);
   sunlightSelect.addEventListener('change', persistFilters);
   searchInput.addEventListener('change', persistFilters);
-  viewModeSelect.addEventListener('change', persistDisplayState);
-  cardSizeSelect.addEventListener('change', persistDisplayState);
-  layoutModeSelect.addEventListener('change', persistDisplayState);
-
-  document.querySelectorAll('.enrich-btn').forEach((button) => {
-    button.addEventListener('click', async () => {
-      const card = button.closest('.database-card');
-      const target = card.querySelector('.api-summary');
-      const query = button.dataset.query;
-
-      target.classList.remove('hidden');
-      target.textContent = 'Loading summary from Wikipedia...';
-
-      try {
-        const response = await fetch(`/plant-database/api/summary?query=${encodeURIComponent(query)}`);
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Unable to load summary');
-        }
-
-        target.textContent = data.summary;
-      } catch (error) {
-        target.textContent = error.message;
-      }
-    });
-  });
 
   document.getElementById('clearDatabaseFilters').addEventListener('click', () => {
     localStorage.removeItem(storageKey);

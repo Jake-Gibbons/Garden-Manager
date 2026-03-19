@@ -1,0 +1,109 @@
+<%- include('../partials/header') %>
+<section class="page-hero compact">
+  <p class="eyebrow"><%= plant.type %></p>
+  <h1><%= plant.commonName %></h1>
+  <p class="hero-copy"><em><%= plant.scientificName %></em></p>
+  <div class="hero-actions">
+    <a class="btn btn-secondary" href="/plant-database">Back To Database</a>
+    <a class="btn" href="/plants/add?template=<%= encodeURIComponent(plant.id) %>">Use In Add Form</a>
+  </div>
+</section>
+
+<section class="plant-detail-shell">
+  <aside class="panel plant-detail-figure">
+    <img class="plant-detail-image" src="<%= plant.image %>" alt="<%= plant.imageAlt %>">
+    <div class="plant-detail-facts">
+      <div class="plant-detail-fact">
+        <strong>Family</strong>
+        <span><%= plant.family %></span>
+      </div>
+      <div class="plant-detail-fact">
+        <strong>Genus</strong>
+        <span><%= plant.genus %></span>
+      </div>
+      <div class="plant-detail-fact">
+        <strong>Sunlight</strong>
+        <span><%= plant.sunlightPreference %></span>
+      </div>
+      <div class="plant-detail-fact">
+        <strong>Hardiness</strong>
+        <span><%= plant.hardinessZones %></span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="plant-detail-sections">
+    <section class="panel plant-detail-section">
+      <h2>Growing Profile</h2>
+      <div class="plant-detail-section-grid">
+        <div>
+          <p class="plant-detail-copy"><strong>Native Region:</strong> <%= plant.nativeRegion %></p>
+          <p class="plant-detail-copy"><strong>Growth Habit:</strong> <%= plant.growthHabit %></p>
+          <p class="plant-detail-copy"><strong>Mature Size:</strong> <%= plant.matureSize %></p>
+        </div>
+        <div>
+          <p class="plant-detail-copy"><strong>Soil:</strong> <%= plant.soilType %></p>
+          <p class="plant-detail-copy"><strong>Watering:</strong> <%= plant.wateringNeeds %></p>
+          <p class="plant-detail-copy"><strong>Harvest/Bloom:</strong> <%= plant.harvestSeason %></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel plant-detail-section">
+      <h2>Care Notes</h2>
+      <p class="plant-detail-copy"><strong>Common Pests and Diseases:</strong> <%= plant.commonPestsDiseases %></p>
+      <p class="plant-detail-copy"><strong>Toxicity and Handling:</strong> <%= plant.toxicity %></p>
+      <p class="plant-detail-copy"><strong>Companion Plants:</strong> <%= plant.companionPlants %></p>
+    </section>
+
+    <section class="panel plant-detail-section">
+      <h2>Reference Tools</h2>
+      <div class="database-actions">
+        <button type="button" class="btn btn-secondary" id="loadPlantSummary" data-query="<%= plant.scientificName %>">Fetch Wikipedia Summary</button>
+        <a class="btn" target="_blank" rel="noreferrer" href="https://www.gbif.org/species/search?q=<%= encodeURIComponent(plant.scientificName) %>">Open GBIF Search</a>
+      </div>
+      <div id="plantSummary" class="api-summary hidden" aria-live="polite"></div>
+    </section>
+
+    <% if (relatedPlants.length > 0) { %>
+      <section class="panel plant-detail-section">
+        <h2>More <%= plant.type %> plants</h2>
+        <div class="related-plants-grid">
+          <% relatedPlants.forEach((relatedPlant) => { %>
+            <a class="card related-plant-card" href="/plant-database/<%= encodeURIComponent(relatedPlant.id) %>">
+              <img class="database-card-image" src="<%= relatedPlant.image %>" alt="<%= relatedPlant.imageAlt %>">
+              <div>
+                <h3><%= relatedPlant.commonName %></h3>
+                <p><em><%= relatedPlant.scientificName %></em></p>
+              </div>
+            </a>
+          <% }) %>
+        </div>
+      </section>
+    <% } %>
+  </div>
+</section>
+
+<script>
+  const loadPlantSummaryButton = document.getElementById('loadPlantSummary');
+  const plantSummary = document.getElementById('plantSummary');
+
+  loadPlantSummaryButton.addEventListener('click', async () => {
+    plantSummary.classList.remove('hidden');
+    plantSummary.textContent = 'Loading summary from Wikipedia...';
+
+    try {
+      const response = await fetch(`/plant-database/api/summary?query=${encodeURIComponent(loadPlantSummaryButton.dataset.query)}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Unable to load summary');
+      }
+
+      plantSummary.textContent = data.summary;
+    } catch (error) {
+      plantSummary.textContent = error.message;
+    }
+  });
+</script>
+<%- include('../partials/footer') %>

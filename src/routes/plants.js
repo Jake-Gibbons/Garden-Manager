@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../database');
 const { createPlantModel } = require('../models/plant');
 const { getPlantTypeOptions } = require('../data/plantTypes');
+const { plantCatalog } = require('../data/plantCatalog');
 const { searchSpecies } = require('../services/gbif');
 const plantModel = createPlantModel(db);
 
@@ -12,7 +13,27 @@ router.get('/', (req, res) => {
 });
 
 router.get('/add', (req, res) => {
-  res.render('plants/add', { plantTypeOptions: getPlantTypeOptions() });
+  const preselectedPlantId = typeof req.query.template === 'string' ? req.query.template : '';
+
+  res.render('plants/add', {
+    plantTypeOptions: getPlantTypeOptions(),
+    plantCatalog,
+    preselectedPlantId
+  });
+});
+
+router.get('/:id/edit', (req, res) => {
+  const plant = plantModel.getPlantById(req.params.id);
+
+  if (!plant) {
+    return res.status(404).send('Plant not found');
+  }
+
+  res.render('plants/edit', {
+    plant,
+    plantCatalog,
+    plantTypeOptions: getPlantTypeOptions()
+  });
 });
 
 /**

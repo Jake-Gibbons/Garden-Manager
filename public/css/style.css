@@ -49,6 +49,7 @@ body {
 }
 
 .site-header {
+	-webkit-backdrop-filter: blur(8px);
 	backdrop-filter: blur(8px);
 	background: rgba(255, 253, 248, 0.88);
 	border-bottom: 1px solid rgba(211, 216, 201, 0.7);
@@ -537,61 +538,45 @@ tr:last-child td {
 .database-grid {
 	display: grid;
 	gap: 1rem;
-	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-}
-
-.database-layout-list {
-	grid-template-columns: 1fr;
-}
-
-.database-layout-list .database-card {
-	grid-template-columns: minmax(180px, 240px) 1fr;
-	column-gap: 1.2rem;
-	align-items: start;
-}
-
-.database-layout-list .database-card-head,
-.database-layout-list .database-actions,
-.database-layout-list .api-summary {
-	grid-column: 1;
-}
-
-.database-layout-list .database-meta-grid {
-	grid-column: 2;
-	grid-row: 1 / span 3;
+	grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
 }
 
 .database-card {
 	display: grid;
-	gap: 0.9rem;
-	align-content: start;
-}
-
-.database-size-compact .database-card {
-	padding: 0.9rem;
 	gap: 0.65rem;
+	align-content: start;
+	padding: 0.9rem;
 }
 
-.database-size-compact .database-meta-grid p {
-	font-size: 0.84rem;
+.database-card-media-link {
+	display: block;
+	text-decoration: none;
 }
 
-.database-size-comfortable .database-card {
-	padding: 1.2rem;
+.database-card-image {
+	width: 100%;
+	aspect-ratio: 4 / 3;
+	object-fit: cover;
+	border-radius: 12px;
+	border: 1px solid #dce4d0;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+	background: #edf4e7;
 }
 
-.database-size-expanded .database-card {
-	padding: 1.5rem;
-	gap: 1rem;
-}
-
-.database-size-expanded .database-meta-grid p {
-	font-size: 0.97rem;
-	line-height: 1.5;
+.database-card-head h2 {
+	font-size: 1.08rem;
+	line-height: 1.15;
+	margin: 0;
 }
 
 .database-card-head p {
 	margin-top: 0.25rem;
+	font-size: 0.88rem;
+}
+
+.database-card .btn {
+	padding: 0.46rem 0.8rem;
+	font-size: 0.88rem;
 }
 
 .database-meta-grid {
@@ -601,15 +586,6 @@ tr:last-child td {
 
 .database-field {
 	display: block;
-}
-
-.database-view-basic .database-field-information,
-.database-view-basic .database-field-detailed {
-	display: none;
-}
-
-.database-view-information .database-field-detailed {
-	display: none;
 }
 
 .database-meta-grid p {
@@ -638,6 +614,86 @@ tr:last-child td {
 	font-size: 0.9rem;
 	line-height: 1.45;
 	color: #2f4433;
+}
+
+.plant-detail-shell {
+	display: grid;
+	grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+	gap: 1.2rem;
+	align-items: start;
+}
+
+.plant-detail-figure {
+	display: grid;
+	gap: 0.9rem;
+	position: sticky;
+	top: 6rem;
+}
+
+.plant-detail-image {
+	width: 100%;
+	aspect-ratio: 4 / 3;
+	object-fit: cover;
+	border-radius: 18px;
+	border: 1px solid #d5ddca;
+	background: #edf4e7;
+	box-shadow: var(--shadow);
+}
+
+.plant-detail-facts {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.75rem;
+}
+
+.plant-detail-fact {
+	background: rgba(237, 244, 231, 0.75);
+	border: 1px solid #d9dfce;
+	border-radius: 14px;
+	padding: 0.85rem;
+}
+
+.plant-detail-fact strong {
+	display: block;
+	margin-bottom: 0.3rem;
+	color: #24412c;
+}
+
+.plant-detail-sections {
+	display: grid;
+	gap: 1rem;
+}
+
+.plant-detail-section {
+	display: grid;
+	gap: 0.75rem;
+}
+
+.plant-detail-section-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.9rem;
+}
+
+.plant-detail-copy {
+	line-height: 1.55;
+}
+
+.related-plants-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 0.9rem;
+}
+
+.related-plant-card {
+	display: grid;
+	gap: 0.65rem;
+	text-decoration: none;
+	color: inherit;
+}
+
+.related-plant-card p {
+	font-size: 0.9rem;
 }
 
 .reminder-section ul {
@@ -677,6 +733,161 @@ footer {
 	}
 }
 
+.garden-plan-layout {
+	display: grid;
+	grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+	gap: 1rem;
+	align-items: start;
+}
+
+.garden-plan-sidebar,
+.garden-plan-canvas-panel,
+.garden-plan-section {
+	display: grid;
+	gap: 1rem;
+}
+
+.garden-plan-hint {
+	font-size: 0.92rem;
+	line-height: 1.5;
+}
+
+.garden-plan-summary {
+	display: grid;
+	gap: 0.35rem;
+	padding: 0.9rem;
+	border-radius: 14px;
+	background: #f4f8ed;
+	border: 1px solid #d9e2cf;
+}
+
+.garden-plan-marker-list {
+	list-style: none;
+	display: grid;
+	gap: 0.7rem;
+}
+
+.garden-plan-marker-list li {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.8rem;
+	border: 1px solid #dde5d4;
+	border-radius: 14px;
+	background: #fffef9;
+}
+
+.garden-plan-empty {
+	text-align: center;
+	color: #667262;
+	padding: 1rem;
+	border-style: dashed;
+}
+
+.garden-plan-marker-list p {
+	margin: 0.2rem 0 0;
+	font-size: 0.88rem;
+}
+
+.garden-plan-marker-chip {
+	width: 42px;
+	height: 42px;
+	border-radius: 999px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: #fff;
+	font-weight: 800;
+	font-size: 0.8rem;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
+.garden-plan-canvas-shell {
+	border-radius: 20px;
+	overflow: hidden;
+	border: 1px solid #d9e1cf;
+	background: linear-gradient(180deg, #fbfcf8 0%, #f1f5ea 100%);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.garden-plan-canvas {
+	width: 100%;
+	height: auto;
+	display: block;
+	cursor: crosshair;
+	touch-action: none;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(226, 239, 217, 0.18));
+}
+
+.garden-plan-shape {
+	fill: rgba(79, 143, 91, 0.18);
+	stroke: #3b6d46;
+	stroke-width: 4;
+	stroke-linejoin: round;
+	stroke-dasharray: 10 10;
+}
+
+.garden-plan-outline {
+	fill: none;
+	stroke: #416e47;
+	stroke-width: 4;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.garden-plan-point {
+	fill: #23412c;
+	stroke: rgba(255, 255, 255, 0.75);
+	stroke-width: 3;
+}
+
+.garden-plan-marker {
+	cursor: grab;
+}
+
+.garden-plan-marker circle {
+	stroke: rgba(255, 255, 255, 0.95);
+	stroke-width: 3;
+	filter: drop-shadow(0 6px 12px rgba(36, 53, 39, 0.18));
+}
+
+.garden-plan-marker text {
+	fill: #fff;
+	font-family: 'Manrope', sans-serif;
+	font-size: 0.9rem;
+	font-weight: 800;
+	-webkit-user-select: none;
+	user-select: none;
+	pointer-events: none;
+}
+
+.garden-plan-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	font-size: 0.92rem;
+	color: #47604a;
+}
+
+.garden-plan-legend span {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45rem;
+	padding: 0.45rem 0.65rem;
+	border-radius: 999px;
+	background: #f5f8ef;
+	border: 1px solid #dce4d4;
+}
+
+.garden-plan-legend i {
+	width: 14px;
+	height: 14px;
+	border-radius: 999px;
+	display: inline-block;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
 @media (max-width: 880px) {
 	.two-col {
 		grid-template-columns: 1fr;
@@ -686,16 +897,15 @@ footer {
 		grid-template-columns: 1fr;
 	}
 
-	.database-layout-list .database-card {
+	.plant-detail-shell,
+	.garden-plan-layout,
+	.plant-detail-section-grid,
+	.plant-detail-facts {
 		grid-template-columns: 1fr;
 	}
 
-	.database-layout-list .database-card-head,
-	.database-layout-list .database-actions,
-	.database-layout-list .api-summary,
-	.database-layout-list .database-meta-grid {
-		grid-column: auto;
-		grid-row: auto;
+	.plant-detail-figure {
+		position: static;
 	}
 
 	nav {
@@ -715,5 +925,9 @@ footer {
 
 	.calendar-day {
 		min-height: 78px;
+	}
+
+	.garden-plan-marker-list li {
+		grid-template-columns: auto 1fr;
 	}
 }

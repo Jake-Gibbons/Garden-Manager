@@ -25,6 +25,12 @@ describe('Routes', () => {
     expect(res.status).toBe(200);
   });
 
+  test('GET /garden-plan returns 200', async () => {
+    const res = await request(app).get('/garden-plan');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('Garden Plan Designer');
+  });
+
   test('GET /plants returns 200', async () => {
     const res = await request(app).get('/plants');
     expect(res.status).toBe(200);
@@ -57,6 +63,25 @@ describe('Routes', () => {
     const res = await request(app).get('/plant-database?search=tomato&type=vegetable&sunlight=full&page=1');
     expect(res.status).toBe(200);
     expect(res.text).toContain('Tomato');
+  });
+
+  test('GET /plant-database supports new tree category filter', async () => {
+    const res = await request(app).get('/plant-database?type=tree&page=1');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('Japanese Maple');
+  });
+
+  test('GET /plant-database supports cactus category filter', async () => {
+    const res = await request(app).get('/plant-database?type=cactus&page=1');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('Saguaro');
+  });
+
+  test('GET /plant-database/:id returns dedicated plant detail page', async () => {
+    const res = await request(app).get('/plant-database/acer-palmatum');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('Japanese Maple');
+    expect(res.text).toContain('Fetch Wikipedia Summary');
   });
 
   test('GET /plant-database/api/summary returns cached summary payload', async () => {

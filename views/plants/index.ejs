@@ -59,35 +59,5 @@
   </tbody>
 </table>
 </section>
-<h1 class="mb-3">My Plants</h1>
-<a href="/plants/add" class="btn btn-success mb-3">Add Plant</a>
-<% if (plants.length === 0) { %>
-  <div class="alert alert-info">No plants yet. <a href="/plants/add">Add one!</a></div>
-<% } else { %>
-<div class="table-responsive">
-  <table class="table table-striped table-hover align-middle">
-    <thead class="gm-thead">
-      <tr>
-        <th>Name</th><th>Type</th><th>Cultivation</th><th>Planting Date</th><th>Notes</th><th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% plants.forEach(plant => { %>
-      <tr>
-        <td><%= plant.name %></td>
-        <td><%= plant.type %></td>
-        <td><%= plant.cultivation %></td>
-        <td><%= plant.planting_date %></td>
-        <td><%= plant.notes %></td>
-        <td>
-          <form method="POST" action="/plants/<%= plant.id %>/delete">
-            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-          </form>
-        </td>
-      </tr>
-      <% }) %>
-    </tbody>
-  </table>
-</div>
 <% } %>
 <%- include('../partials/footer') %>

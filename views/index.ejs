@@ -4,12 +4,20 @@
   <h1>Grow Smarter, From Seed To Harvest</h1>
   <p class="hero-copy">Track every plant, save scientific details, and keep your care tasks clear with a dashboard designed for real gardeners.</p>
   <div class="hero-actions">
+    <a class="btn" href="/garden-plan">Open Garden Planner</a>
     <a class="btn" href="/plants/add">Add a Plant</a>
     <a class="btn btn-secondary" href="/plants">View Collection</a>
   </div>
 </section>
 
 <section class="cards metrics">
+  <article class="card spotlight">
+    <h2>Garden Layout</h2>
+    <p class="count">New</p>
+    <p>Sketch your bed layout and mark where vegetables, herbs, flowers, and infrastructure belong.</p>
+    <a href="/garden-plan">Open Designer</a>
+  </article>
+
   <article class="card spotlight">
     <h2>Plants In Collection</h2>
     <p class="count"><%= plantCount %></p>
@@ -24,25 +32,4 @@
     <a href="/reminders">Open Reminders</a>
   </article>
 </section>
-<h1 class="mb-4">Welcome to Garden Manager</h1>
-<div class="row g-3">
-  <div class="col-sm-6">
-    <div class="card h-100 text-center shadow-sm">
-      <div class="card-body">
-        <h2 class="card-title h4">Plants</h2>
-        <p class="display-4 fw-bold gm-count my-3"><%= plantCount %></p>
-        <a href="/plants" class="btn btn-success">View Plants</a>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-6">
-    <div class="card h-100 text-center shadow-sm">
-      <div class="card-body">
-        <h2 class="card-title h4">Reminders</h2>
-        <p class="display-4 fw-bold gm-count my-3"><%= reminderCount %></p>
-        <a href="/reminders" class="btn btn-success">View Reminders</a>
-      </div>
-    </div>
-  </div>
-</div>
 <%- include('partials/footer') %>

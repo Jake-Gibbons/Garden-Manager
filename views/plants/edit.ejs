@@ -1,5 +1,5 @@
 <%- include('../partials/header') %>
-<% const catalog = Array.isArray(typeof plantCatalog === 'undefined' ? [] : plantCatalog) ? plantCatalog : []; %>
+<% const catalog = typeof plantCatalog !== 'undefined' && Array.isArray(plantCatalog) ? plantCatalog : []; %>
 <section class="page-hero compact">
   <h1>Edit Plant</h1>
   <p>Update taxonomy, care requirements, and safety information for this plant profile.</p>
@@ -21,11 +21,9 @@
       <div class="form-group">
         <label for="type">Plant Type</label>
         <select id="type" name="type">
-          <option value="vegetable" <%= plant.type === 'vegetable' ? 'selected' : '' %>>Vegetable</option>
-          <option value="flower" <%= plant.type === 'flower' ? 'selected' : '' %>>Flower</option>
-          <option value="herb" <%= plant.type === 'herb' ? 'selected' : '' %>>Herb</option>
-          <option value="fruit" <%= plant.type === 'fruit' ? 'selected' : '' %>>Fruit</option>
-          <option value="other" <%= plant.type === 'other' ? 'selected' : '' %>>Other</option>
+          <% plantTypeOptions.forEach(option => { %>
+            <option value="<%= option.value %>" <%= plant.type === option.value ? 'selected' : '' %>><%= option.label %></option>
+          <% }) %>
         </select>
       </div>
     </div>
@@ -187,5 +185,9 @@
     setPreview(selected);
     preview.classList.remove('hidden');
   });
+
+  if (plantTemplate.value) {
+    plantTemplate.dispatchEvent(new Event('change'));
+  }
 </script>
 <%- include('../partials/footer') %>
