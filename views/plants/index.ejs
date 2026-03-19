@@ -1,8 +1,31 @@
 <%- include('../partials/header') %>
-<section class="page-hero compact">
-  <h1>My Plant Collection</h1>
-  <p>Browse your full garden inventory with both common and scientific naming details.</p>
-  <a href="/plants/add" class="btn">Add Plant</a>
+<%
+  const indoorCount = plants.filter((plant) => plant.cultivation === 'indoor').length;
+  const outdoorCount = plants.filter((plant) => plant.cultivation === 'outdoor').length;
+  const uniqueTypes = new Set(plants.map((plant) => plant.type).filter(Boolean)).size;
+%>
+<section class="page-hero page-hero-collection">
+  <p class="eyebrow">Collection Workspace</p>
+  <h1>Your Plants, Organized For Fast Decisions</h1>
+  <p class="hero-copy">Each card is designed to answer practical questions quickly: what this plant is, where it grows, what it needs, and what risks or notes matter right now.</p>
+  <div class="hero-grid">
+    <article class="hero-stat-card">
+      <p>Total plants</p>
+      <strong><%= plants.length %></strong>
+    </article>
+    <article class="hero-stat-card">
+      <p>Indoor</p>
+      <strong><%= indoorCount %></strong>
+    </article>
+    <article class="hero-stat-card">
+      <p>Types tracked</p>
+      <strong><%= uniqueTypes %></strong>
+    </article>
+  </div>
+  <div class="hero-actions">
+    <a href="/plants/add" class="btn">Add Plant</a>
+    <a href="/plant-database" class="btn btn-secondary">Browse Database</a>
+  </div>
 </section>
 
 <% if (plants.length === 0) { %>
@@ -10,54 +33,72 @@
     <p>No plants yet. <a href="/plants/add">Add your first plant profile.</a></p>
   </section>
 <% } else { %>
-<section class="panel">
-<table>
-  <thead>
-    <tr>
-      <th>Display Name</th>
-      <th>Common Name</th>
-      <th>Scientific Name</th>
-      <th>Genus</th>
-      <th>Family</th>
-      <th>Type</th>
-      <th>Sunlight</th>
-      <th>Soil Type</th>
-      <th>Pests / Diseases</th>
-      <th>Toxicity / Harm</th>
-      <th>Cultivation</th>
-      <th>Planting Date</th>
-      <th>Notes</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% plants.forEach(plant => { %>
-    <tr>
-      <td><%= plant.name %></td>
-      <td><%= plant.common_name || '-' %></td>
-      <td><%= plant.scientific_name || '-' %></td>
-      <td><%= plant.genus || '-' %></td>
-      <td><%= plant.family || '-' %></td>
-      <td><%= plant.type %></td>
-      <td><%= plant.sunlight_preference || '-' %></td>
-      <td><%= plant.soil_type || '-' %></td>
-      <td><%= plant.common_pests_diseases || '-' %></td>
-      <td><%= plant.toxicity || '-' %></td>
-      <td><%= plant.cultivation %></td>
-      <td><%= plant.planting_date %></td>
-      <td><%= plant.notes || '-' %></td>
-      <td>
-        <div class="action-stack">
+<section class="collection-grid">
+  <% plants.forEach(plant => { %>
+    <article class="panel collection-card">
+      <div class="collection-card-header">
+        <div>
+          <p class="collection-pill"><%= plant.type || 'plant' %></p>
+          <h2><%= plant.name %></h2>
+          <p class="collection-scientific">
+            <%= plant.common_name || 'Unnamed species' %>
+            <% if (plant.scientific_name) { %>
+              · <em><%= plant.scientific_name %></em>
+            <% } %>
+          </p>
+        </div>
+        <div class="action-stack collection-actions">
           <a href="/plants/<%= plant.id %>/edit" class="btn btn-secondary">Edit</a>
           <form method="POST" action="/plants/<%= plant.id %>/delete">
             <button type="submit" class="btn-danger">Delete</button>
           </form>
         </div>
-      </td>
-    </tr>
-    <% }) %>
-  </tbody>
-</table>
+      </div>
+
+      <dl class="collection-meta">
+        <div>
+          <dt>Genus</dt>
+          <dd><%= plant.genus || '-' %></dd>
+        </div>
+        <div>
+          <dt>Family</dt>
+          <dd><%= plant.family || '-' %></dd>
+        </div>
+        <div>
+          <dt>Sunlight</dt>
+          <dd><%= plant.sunlight_preference || '-' %></dd>
+        </div>
+        <div>
+          <dt>Soil</dt>
+          <dd><%= plant.soil_type || '-' %></dd>
+        </div>
+        <div>
+          <dt>Cultivation</dt>
+          <dd><%= plant.cultivation || '-' %></dd>
+        </div>
+        <div>
+          <dt>Planted</dt>
+          <dd><%= plant.planting_date || '-' %></dd>
+        </div>
+      </dl>
+
+      <div class="collection-detail-stack">
+        <div class="collection-detail-block">
+          <h3>Pests / Diseases</h3>
+          <p><%= plant.common_pests_diseases || 'No issues recorded yet.' %></p>
+        </div>
+        <div class="collection-detail-block">
+          <h3>Toxicity</h3>
+          <p><%= plant.toxicity || 'No toxicity notes recorded.' %></p>
+        </div>
+      </div>
+
+      <div class="collection-notes">
+        <h3>Notes</h3>
+        <p><%= plant.notes || 'No notes yet.' %></p>
+      </div>
+    </article>
+  <% }) %>
 </section>
 <% } %>
 <%- include('../partials/footer') %>

@@ -1,12 +1,13 @@
 <%- include('../partials/header') %>
 <section class="page-hero compact">
-  <h1>Care Reminders</h1>
-  <p>Stay ahead of watering, feeding, weeding, and pruning with a clear weekly rhythm.</p>
+  <p class="eyebrow">Care Engine</p>
+  <h1>Reminders</h1>
+  <p>Use list view for quick decisions and calendar view for workload planning across the month.</p>
 </section>
 
 <section class="panel reminder-controls">
   <div class="toggle-group" role="tablist" aria-label="Reminder view toggle">
-    <button id="showListView" class="btn toggle-btn is-active" type="button" role="tab" aria-selected="true">Current View</button>
+    <button id="showListView" class="btn toggle-btn is-active" type="button" role="tab" aria-selected="true">List View</button>
     <button id="showCalendarView" class="btn toggle-btn" type="button" role="tab" aria-selected="false">Calendar View</button>
   </div>
 
@@ -24,36 +25,35 @@
   </div>
 </section>
 
-<h1 class="mb-4">Reminders</h1>
 <% const sections = [
-  { key: 'water', label: 'Watering', icon: '💧' },
-  { key: 'feed',  label: 'Feeding',  icon: '🌿' },
-  { key: 'weed',  label: 'Weeding',  icon: '🌾' },
-  { key: 'prune', label: 'Pruning',  icon: '✂️' }
+  { key: 'water', label: 'Watering', icon: 'Water' },
+  { key: 'feed',  label: 'Feeding',  icon: 'Feed' },
+  { key: 'weed',  label: 'Weeding',  icon: 'Weed' },
+  { key: 'prune', label: 'Pruning',  icon: 'Prune' }
 ]; %>
 <section id="listView" class="reminder-grid">
-<div class="row g-3">
 <% sections.forEach(section => { %>
-  <div class="col-md-6">
-    <div class="card shadow-sm h-100">
-      <div class="card-header fw-bold"><%= section.icon %> <%= section.label %></div>
-      <div class="card-body">
-        <% if (grouped[section.key].length === 0) { %>
-          <p class="text-muted mb-0">No <%= section.label.toLowerCase() %> reminders.</p>
-        <% } else { %>
-        <ul class="list-group list-group-flush">
-          <% grouped[section.key].forEach(r => { %>
-            <li class="list-group-item px-0">
-              <strong><%= r.plantName %></strong>
-              <span class="badge bg-success ms-2">Due: <%= r.dueDate %></span>
-              <small class="text-muted d-block">Every <%= r.frequency %> days</small>
-            </li>
-          <% }) %>
-        </ul>
-        <% } %>
-      </div>
+  <article class="panel reminder-card">
+    <div class="reminder-card-header">
+      <span class="reminder-card-kicker"><%= section.icon %></span>
+      <h2><%= section.label %></h2>
     </div>
-  </div>
+    <% if (grouped[section.key].length === 0) { %>
+      <p class="reminder-empty-copy">No <%= section.label.toLowerCase() %> reminders right now.</p>
+    <% } else { %>
+      <ul class="reminder-list">
+        <% grouped[section.key].forEach(r => { %>
+          <li>
+            <div>
+              <strong><%= r.plantName %></strong>
+              <p>Every <%= r.frequency %> days</p>
+            </div>
+            <span class="reminder-date-pill">Due <%= r.dueDate %></span>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </article>
 <% }) %>
 </section>
 
@@ -74,8 +74,9 @@
   </section>
 </section>
 
+<script id="reminder-data" type="application/json"><%- JSON.stringify(reminders) %></script>
 <script>
-  const reminderData = <%- JSON.stringify(reminders) %>;
+  const reminderData = JSON.parse(document.getElementById('reminder-data').textContent);
 
   const listView = document.getElementById('listView');
   const calendarView = document.getElementById('calendarView');
@@ -250,5 +251,4 @@
     renderCalendar(activeMonth);
   });
 </script>
-</div>
 <%- include('../partials/footer') %>

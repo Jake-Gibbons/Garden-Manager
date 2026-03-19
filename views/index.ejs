@@ -1,35 +1,62 @@
 <%- include('partials/header') %>
-<section class="page-hero">
-  <p class="eyebrow">Season Planner</p>
-  <h1>Grow Smarter, From Seed To Harvest</h1>
-  <p class="hero-copy">Track every plant, save scientific details, and keep your care tasks clear with a dashboard designed for real gardeners.</p>
+<section class="page-hero page-hero-home">
+  <p class="eyebrow">Garden OS</p>
+  <h1>Run Your Garden Like A Calm, Clear Workflow</h1>
+  <p class="hero-copy">Map beds, manage each plant profile, and keep daily care visible without getting lost in cluttered screens or giant tables.</p>
+  <div class="hero-grid">
+    <article class="hero-stat-card">
+      <p>Tracked plants</p>
+      <strong><%= plantCount %></strong>
+    </article>
+    <article class="hero-stat-card">
+      <p>Active reminders</p>
+      <strong><%= reminderCount %></strong>
+    </article>
+    <article class="hero-stat-card">
+      <p>Next best step</p>
+      <strong><%= plantCount > 0 ? 'Check reminders' : 'Add first plant' %></strong>
+    </article>
+  </div>
   <div class="hero-actions">
     <a class="btn" href="/garden-plan">Open Garden Planner</a>
     <a class="btn" href="/plants/add">Add a Plant</a>
-    <a class="btn btn-secondary" href="/plants">View Collection</a>
+    <a class="btn btn-secondary" href="/plants">Open Collection</a>
   </div>
 </section>
 
-<section class="cards metrics">
-  <article class="card spotlight">
-    <h2>Garden Layout</h2>
-    <p class="count">New</p>
-    <p>Sketch your bed layout and mark where vegetables, herbs, flowers, and infrastructure belong.</p>
-    <a href="/garden-plan">Open Designer</a>
+<section class="cards tri-grid">
+  <article class="card workflow-card">
+    <p class="eyebrow">01</p>
+    <h2>Design The Space</h2>
+    <p>Draw your garden shape and place markers for growing zones, irrigation, and compost.</p>
+    <a href="/garden-plan">Open Planner</a>
   </article>
 
-  <article class="card spotlight">
-    <h2>Plants In Collection</h2>
-    <p class="count"><%= plantCount %></p>
-    <p>See complete records with common names, scientific names, genus, and family.</p>
+  <article class="card workflow-card">
+    <p class="eyebrow">02</p>
+    <h2>Track Each Plant</h2>
+    <p>Keep species identity, care conditions, toxicity, and notes in one clear collection view.</p>
     <a href="/plants">Open Plants</a>
   </article>
 
-  <article class="card spotlight">
-    <h2>Active Reminders</h2>
-    <p class="count"><%= reminderCount %></p>
-    <p>Watering, feeding, weeding, and pruning schedules in one place.</p>
+  <article class="card workflow-card">
+    <p class="eyebrow">03</p>
+    <h2>Work The Schedule</h2>
+    <p>Use reminders as your operational view for watering, feeding, weeding, and pruning.</p>
     <a href="/reminders">Open Reminders</a>
+  </article>
+</section>
+
+<section class="cards dual-grid">
+  <article class="card">
+    <h2>Plant Database</h2>
+    <p>Need better taxonomy data before adding a new profile? Use the database to browse and prefill entries quickly.</p>
+    <a href="/plant-database">Browse Plant Database</a>
+  </article>
+  <article class="card">
+    <h2>Collection First UX</h2>
+    <p>The collection page is redesigned for scanning, not spreadsheet reading, so decisions take less time.</p>
+    <a href="/plants">See Collection Design</a>
   </article>
 </section>
 <%- include('partials/footer') %>

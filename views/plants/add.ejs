@@ -2,32 +2,39 @@
 <% const catalog = typeof plantCatalog !== 'undefined' && Array.isArray(plantCatalog) ? plantCatalog : []; %>
 <% const selectedPlantId = typeof preselectedPlantId === 'string' ? preselectedPlantId : ''; %>
 <section class="page-hero compact">
-  <h1>Build Your Garden Profile</h1>
-  <p>Choose a pre-loaded plant for instant taxonomy details, or enter your own species data manually.</p>
+  <p class="eyebrow">Add Plant</p>
+  <h1>Create A New Plant Profile</h1>
+  <p>The form is split into clear sections so you can move from identity to growing setup to risk notes without confusion.</p>
 </section>
 
 <section class="panel form-panel">
   <form method="POST" action="/plants/add" class="plant-form" id="add-plant-form">
-    <div class="form-grid two-col">
-      <div class="form-group">
-        <label for="plantTemplate">Choose from common plants and vegetables</label>
-        <select id="plantTemplate" name="plant_template">
-          <option value="">Custom entry (no prefill)</option>
-          <% catalog.forEach(plant => { %>
-            <option value="<%= plant.id %>" <%= selectedPlantId === plant.id ? 'selected' : '' %>><%= plant.commonName %> - <%= plant.scientificName %></option>
-          <% }) %>
-        </select>
+    <section class="form-section">
+      <div class="section-heading">
+        <h2>1. Starting Point</h2>
+        <p>Use catalog prefills if you want quick, reliable taxonomy data.</p>
       </div>
+      <div class="form-grid two-col">
+        <div class="form-group">
+          <label for="plantTemplate">Choose from common plants and vegetables</label>
+          <select id="plantTemplate" name="plant_template">
+            <option value="">Custom entry (no prefill)</option>
+            <% catalog.forEach(plant => { %>
+              <option value="<%= plant.id %>" <%= selectedPlantId === plant.id ? 'selected' : '' %>><%= plant.commonName %> - <%= plant.scientificName %></option>
+            <% }) %>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="type">Plant Type</label>
-        <select id="type" name="type">
-          <% plantTypeOptions.forEach(option => { %>
-            <option value="<%= option.value %>"><%= option.label %></option>
-          <% }) %>
-        </select>
+        <div class="form-group">
+          <label for="type">Plant Type</label>
+          <select id="type" name="type">
+            <% plantTypeOptions.forEach(option => { %>
+              <option value="<%= option.value %>"><%= option.label %></option>
+            <% }) %>
+          </select>
+        </div>
       </div>
-    </div>
+    </section>
 
     <div id="taxonomyPreview" class="taxonomy-preview hidden" aria-live="polite">
       <h2>Selected Plant Taxonomy</h2>
@@ -41,93 +48,115 @@
       <p><strong>Toxicity/Harm:</strong> <span id="previewToxicity">-</span></p>
     </div>
 
-    <div class="form-grid two-col">
-      <div class="form-group">
-        <label for="common_name">Common Name</label>
-        <input type="text" id="common_name" name="common_name" required>
+    <section class="form-section">
+      <div class="section-heading">
+        <h2>2. Identity</h2>
+        <p>Record names and taxonomy for future lookup and filtering.</p>
+      </div>
+      <div class="form-grid two-col">
+        <div class="form-group">
+          <label for="common_name">Common Name</label>
+          <input type="text" id="common_name" name="common_name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="scientific_name">Scientific Name</label>
+          <input type="text" id="scientific_name" name="scientific_name" required>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="scientific_name">Scientific Name</label>
-        <input type="text" id="scientific_name" name="scientific_name" required>
+      <div class="form-grid two-col">
+        <div class="form-group">
+          <label for="genus">Genus</label>
+          <input type="text" id="genus" name="genus">
+        </div>
+
+        <div class="form-group">
+          <label for="family">Family</label>
+          <input type="text" id="family" name="family">
+        </div>
       </div>
+    </section>
+
+    <section class="form-section">
+      <div class="section-heading">
+        <h2>3. Growing Setup</h2>
+        <p>Describe where this plant grows and what conditions it needs.</p>
+      </div>
+      <div class="form-grid two-col">
+        <div class="form-group">
+          <label for="name">Display Name (optional)</label>
+          <input type="text" id="name" name="name" placeholder="Example: Patio Tomato #1">
+        </div>
+
+        <div class="form-group">
+          <label for="cultivation">Cultivation</label>
+          <select id="cultivation" name="cultivation">
+            <option value="outdoor">Outdoor</option>
+            <option value="indoor">Indoor</option>
+            <option value="greenhouse">Greenhouse</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid two-col">
+        <div class="form-group">
+          <label for="sunlight_preference">Sunlight Preference</label>
+          <select id="sunlight_preference" name="sunlight_preference">
+            <option value="full">Full Sun</option>
+            <option value="partial">Partial Sun</option>
+            <option value="shady">Shady</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="soil_type">Soil Type</label>
+          <input type="text" id="soil_type" name="soil_type" placeholder="Example: Sandy, well-draining">
+        </div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="section-heading">
+        <h2>4. Risks And Notes</h2>
+        <p>Capture practical issues, safety details, and your observations.</p>
+      </div>
+      <div class="form-grid two-col">
+        <div class="form-group">
+          <label for="common_pests_diseases">Common Pests or Diseases</label>
+          <textarea id="common_pests_diseases" name="common_pests_diseases" placeholder="Example: aphids, powdery mildew"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="toxicity">Toxicity or Harmful Properties</label>
+          <textarea id="toxicity" name="toxicity" placeholder="Example: toxic to pets if ingested"></textarea>
+        </div>
+      </div>
+
+      <div class="form-grid two-col">
+        <div class="form-group">
+          <label for="planting_date">Planting Date</label>
+          <input type="date" id="planting_date" name="planting_date" required>
+        </div>
+
+        <div class="form-group">
+          <label for="notes">Notes</label>
+          <textarea id="notes" name="notes" placeholder="Light needs, watering habits, growth goals..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <div class="hero-actions">
+      <button type="submit" class="btn">Save Plant Profile</button>
+      <a href="/plants" class="btn btn-secondary">Back To Collection</a>
     </div>
-
-    <div class="form-grid two-col">
-      <div class="form-group">
-        <label for="genus">Genus</label>
-        <input type="text" id="genus" name="genus">
-      </div>
-
-      <div class="form-group">
-        <label for="family">Family</label>
-        <input type="text" id="family" name="family">
-      </div>
-    </div>
-
-    <div class="form-grid two-col">
-      <div class="form-group">
-        <label for="name">Display Name (optional)</label>
-        <input type="text" id="name" name="name" placeholder="Example: Patio Tomato #1">
-      </div>
-
-      <div class="form-group">
-        <label for="cultivation">Cultivation</label>
-        <select id="cultivation" name="cultivation">
-          <option value="outdoor">Outdoor</option>
-          <option value="indoor">Indoor</option>
-          <option value="greenhouse">Greenhouse</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="form-grid two-col">
-      <div class="form-group">
-        <label for="sunlight_preference">Sunlight Preference</label>
-        <select id="sunlight_preference" name="sunlight_preference">
-          <option value="full">Full Sun</option>
-          <option value="partial">Partial Sun</option>
-          <option value="shady">Shady</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="soil_type">Soil Type</label>
-        <input type="text" id="soil_type" name="soil_type" placeholder="Example: Sandy, well-draining">
-      </div>
-    </div>
-
-    <div class="form-grid two-col">
-      <div class="form-group">
-        <label for="common_pests_diseases">Common Pests or Diseases</label>
-        <textarea id="common_pests_diseases" name="common_pests_diseases" placeholder="Example: aphids, powdery mildew"></textarea>
-      </div>
-
-      <div class="form-group">
-        <label for="toxicity">Toxicity or Harmful Properties</label>
-        <textarea id="toxicity" name="toxicity" placeholder="Example: toxic to pets if ingested"></textarea>
-      </div>
-    </div>
-
-    <div class="form-grid two-col">
-      <div class="form-group">
-        <label for="planting_date">Planting Date</label>
-        <input type="date" id="planting_date" name="planting_date" required>
-      </div>
-
-      <div class="form-group">
-        <label for="notes">Notes</label>
-        <textarea id="notes" name="notes" placeholder="Light needs, watering habits, growth goals..."></textarea>
-      </div>
-    </div>
-
-    <button type="submit" class="btn">Add Plant</button>
   </form>
 </section>
 
+<script id="plant-catalog-data" type="application/json"><%- JSON.stringify(catalog) %></script>
 <script>
-  const catalogData = <%- JSON.stringify(catalog) %>;
+  const catalogData = JSON.parse(document.getElementById('plant-catalog-data').textContent);
   const lookup = new Map(catalogData.map((item) => [item.id, item]));
 
   const plantTemplate = document.getElementById('plantTemplate');

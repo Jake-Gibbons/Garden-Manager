@@ -1,32 +1,39 @@
 <%- include('../partials/header') %>
 <% const catalog = typeof plantCatalog !== 'undefined' && Array.isArray(plantCatalog) ? plantCatalog : []; %>
 <section class="page-hero compact">
-  <h1>Edit Plant</h1>
-  <p>Update taxonomy, care requirements, and safety information for this plant profile.</p>
+  <p class="eyebrow">Edit Plant</p>
+  <h1>Update Plant Profile</h1>
+  <p>Review and adjust this plant in clear sections so identity, care setup, and risk notes stay accurate.</p>
 </section>
 
 <section class="panel form-panel">
   <form method="POST" action="/plants/<%= plant.id %>/edit" class="plant-form" id="edit-plant-form">
-    <div class="form-grid two-col">
-      <div class="form-group">
-        <label for="plantTemplate">Prefill from plant catalog</label>
-        <select id="plantTemplate" name="plant_template">
-          <option value="">Keep current values</option>
-          <% catalog.forEach(item => { %>
-            <option value="<%= item.id %>"><%= item.commonName %> - <%= item.scientificName %></option>
-          <% }) %>
-        </select>
+    <section class="form-section">
+      <div class="section-heading">
+        <h2>1. Starting Point</h2>
+        <p>Use the catalog only when you intentionally want to overwrite existing values.</p>
       </div>
+      <div class="form-grid two-col">
+        <div class="form-group">
+          <label for="plantTemplate">Prefill from plant catalog</label>
+          <select id="plantTemplate" name="plant_template">
+            <option value="">Keep current values</option>
+            <% catalog.forEach(item => { %>
+              <option value="<%= item.id %>"><%= item.commonName %> - <%= item.scientificName %></option>
+            <% }) %>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="type">Plant Type</label>
-        <select id="type" name="type">
-          <% plantTypeOptions.forEach(option => { %>
-            <option value="<%= option.value %>" <%= plant.type === option.value ? 'selected' : '' %>><%= option.label %></option>
-          <% }) %>
-        </select>
+        <div class="form-group">
+          <label for="type">Plant Type</label>
+          <select id="type" name="type">
+            <% plantTypeOptions.forEach(option => { %>
+              <option value="<%= option.value %>" <%= plant.type === option.value ? 'selected' : '' %>><%= option.label %></option>
+            <% }) %>
+          </select>
+        </div>
       </div>
-    </div>
+    </section>
 
     <div id="taxonomyPreview" class="taxonomy-preview hidden" aria-live="polite">
       <h2>Selected Plant Details</h2>
@@ -40,86 +47,104 @@
       <p><strong>Toxicity/Harm:</strong> <span id="previewToxicity">-</span></p>
     </div>
 
-    <div class="form-grid two-col">
-      <div class="form-group">
-        <label for="common_name">Common Name</label>
-        <input type="text" id="common_name" name="common_name" value="<%= plant.common_name || '' %>" required>
+    <section class="form-section">
+      <div class="section-heading">
+        <h2>2. Identity</h2>
+        <p>Adjust names and taxonomy first so every downstream view remains accurate.</p>
+      </div>
+      <div class="form-grid two-col">
+        <div class="form-group">
+          <label for="common_name">Common Name</label>
+          <input type="text" id="common_name" name="common_name" value="<%= plant.common_name || '' %>" required>
+        </div>
+
+        <div class="form-group">
+          <label for="scientific_name">Scientific Name</label>
+          <input type="text" id="scientific_name" name="scientific_name" value="<%= plant.scientific_name || '' %>" required>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="scientific_name">Scientific Name</label>
-        <input type="text" id="scientific_name" name="scientific_name" value="<%= plant.scientific_name || '' %>" required>
-      </div>
-    </div>
+      <div class="form-grid two-col">
+        <div class="form-group">
+          <label for="genus">Genus</label>
+          <input type="text" id="genus" name="genus" value="<%= plant.genus || '' %>">
+        </div>
 
-    <div class="form-grid two-col">
-      <div class="form-group">
-        <label for="genus">Genus</label>
-        <input type="text" id="genus" name="genus" value="<%= plant.genus || '' %>">
+        <div class="form-group">
+          <label for="family">Family</label>
+          <input type="text" id="family" name="family" value="<%= plant.family || '' %>">
+        </div>
       </div>
+    </section>
 
-      <div class="form-group">
-        <label for="family">Family</label>
-        <input type="text" id="family" name="family" value="<%= plant.family || '' %>">
+    <section class="form-section">
+      <div class="section-heading">
+        <h2>3. Growing Setup</h2>
+        <p>Confirm naming, environment, sunlight, and soil preferences.</p>
       </div>
-    </div>
+      <div class="form-grid two-col">
+        <div class="form-group">
+          <label for="name">Display Name (optional)</label>
+          <input type="text" id="name" name="name" value="<%= plant.name || '' %>">
+        </div>
 
-    <div class="form-grid two-col">
-      <div class="form-group">
-        <label for="name">Display Name (optional)</label>
-        <input type="text" id="name" name="name" value="<%= plant.name || '' %>">
-      </div>
-
-      <div class="form-group">
-        <label for="cultivation">Cultivation</label>
-        <select id="cultivation" name="cultivation">
-          <option value="outdoor" <%= plant.cultivation === 'outdoor' ? 'selected' : '' %>>Outdoor</option>
-          <option value="indoor" <%= plant.cultivation === 'indoor' ? 'selected' : '' %>>Indoor</option>
-          <option value="greenhouse" <%= plant.cultivation === 'greenhouse' ? 'selected' : '' %>>Greenhouse</option>
-          <option value="other" <%= plant.cultivation === 'other' ? 'selected' : '' %>>Other</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="form-grid two-col">
-      <div class="form-group">
-        <label for="sunlight_preference">Sunlight Preference</label>
-        <select id="sunlight_preference" name="sunlight_preference">
-          <option value="full" <%= plant.sunlight_preference === 'full' ? 'selected' : '' %>>Full Sun</option>
-          <option value="partial" <%= plant.sunlight_preference === 'partial' ? 'selected' : '' %>>Partial Sun</option>
-          <option value="shady" <%= plant.sunlight_preference === 'shady' ? 'selected' : '' %>>Shady</option>
-        </select>
+        <div class="form-group">
+          <label for="cultivation">Cultivation</label>
+          <select id="cultivation" name="cultivation">
+            <option value="outdoor" <%= plant.cultivation === 'outdoor' ? 'selected' : '' %>>Outdoor</option>
+            <option value="indoor" <%= plant.cultivation === 'indoor' ? 'selected' : '' %>>Indoor</option>
+            <option value="greenhouse" <%= plant.cultivation === 'greenhouse' ? 'selected' : '' %>>Greenhouse</option>
+            <option value="other" <%= plant.cultivation === 'other' ? 'selected' : '' %>>Other</option>
+          </select>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="soil_type">Soil Type</label>
-        <input type="text" id="soil_type" name="soil_type" value="<%= plant.soil_type || '' %>">
-      </div>
-    </div>
+      <div class="form-grid two-col">
+        <div class="form-group">
+          <label for="sunlight_preference">Sunlight Preference</label>
+          <select id="sunlight_preference" name="sunlight_preference">
+            <option value="full" <%= plant.sunlight_preference === 'full' ? 'selected' : '' %>>Full Sun</option>
+            <option value="partial" <%= plant.sunlight_preference === 'partial' ? 'selected' : '' %>>Partial Sun</option>
+            <option value="shady" <%= plant.sunlight_preference === 'shady' ? 'selected' : '' %>>Shady</option>
+          </select>
+        </div>
 
-    <div class="form-grid two-col">
-      <div class="form-group">
-        <label for="common_pests_diseases">Common Pests or Diseases</label>
-        <textarea id="common_pests_diseases" name="common_pests_diseases"><%= plant.common_pests_diseases || '' %></textarea>
+        <div class="form-group">
+          <label for="soil_type">Soil Type</label>
+          <input type="text" id="soil_type" name="soil_type" value="<%= plant.soil_type || '' %>">
+        </div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="section-heading">
+        <h2>4. Risks And Notes</h2>
+        <p>Capture problem history, safety details, and notes worth keeping for next season.</p>
+      </div>
+      <div class="form-grid two-col">
+        <div class="form-group">
+          <label for="common_pests_diseases">Common Pests or Diseases</label>
+          <textarea id="common_pests_diseases" name="common_pests_diseases"><%= plant.common_pests_diseases || '' %></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="toxicity">Toxicity or Harmful Properties</label>
+          <textarea id="toxicity" name="toxicity"><%= plant.toxicity || '' %></textarea>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="toxicity">Toxicity or Harmful Properties</label>
-        <textarea id="toxicity" name="toxicity"><%= plant.toxicity || '' %></textarea>
-      </div>
-    </div>
+      <div class="form-grid two-col">
+        <div class="form-group">
+          <label for="planting_date">Planting Date</label>
+          <input type="date" id="planting_date" name="planting_date" value="<%= plant.planting_date || '' %>" required>
+        </div>
 
-    <div class="form-grid two-col">
-      <div class="form-group">
-        <label for="planting_date">Planting Date</label>
-        <input type="date" id="planting_date" name="planting_date" value="<%= plant.planting_date || '' %>" required>
+        <div class="form-group">
+          <label for="notes">Notes</label>
+          <textarea id="notes" name="notes"><%= plant.notes || '' %></textarea>
+        </div>
       </div>
-
-      <div class="form-group">
-        <label for="notes">Notes</label>
-        <textarea id="notes" name="notes"><%= plant.notes || '' %></textarea>
-      </div>
-    </div>
+    </section>
 
     <div class="hero-actions">
       <button type="submit" class="btn">Save Changes</button>
@@ -128,8 +153,9 @@
   </form>
 </section>
 
+<script id="edit-plant-catalog-data" type="application/json"><%- JSON.stringify(catalog) %></script>
 <script>
-  const catalogData = <%- JSON.stringify(catalog) %>;
+  const catalogData = JSON.parse(document.getElementById('edit-plant-catalog-data').textContent);
   const lookup = new Map(catalogData.map((item) => [item.id, item]));
 
   const plantTemplate = document.getElementById('plantTemplate');
