@@ -1,0 +1,29 @@
+<%- include('../partials/header') %>
+<section class="page-hero compact">
+  <p class="eyebrow">Reference Summary</p>
+  <h1><%= plant.commonName %></h1>
+  <p class="hero-copy"><em><%= plant.scientificName %></em></p>
+  <div class="hero-actions">
+    <a class="btn btn-secondary" href="/plant-database/<%= encodeURIComponent(plant.id) %>">Back To Plant Page</a>
+    <a class="btn" href="/plant-database">Back To Database</a>
+  </div>
+</section>
+
+<section class="panel plant-reference-panel">
+  <h2>Wikipedia Summary</h2>
+  <% if (summaryError) { %>
+    <p>Unable to load a summary right now: <strong><%= summaryError %></strong></p>
+  <% } else { %>
+    <p class="reference-source-note"><%= cached ? 'Loaded from cache.' : 'Loaded from live source.' %></p>
+    <p class="reference-summary-copy"><%= summary %></p>
+  <% } %>
+</section>
+
+<section class="panel">
+  <h2>Quick Links</h2>
+  <div class="database-actions">
+    <a class="btn btn-secondary" href="https://www.gbif.org/species/search?q=<%= encodeURIComponent(plant.scientificName) %>" target="_blank" rel="noreferrer">Open GBIF Search</a>
+    <a class="btn" href="/plants/add?template=<%= encodeURIComponent(plant.id) %>">Use In Add Form</a>
+  </div>
+</section>
+<%- include('../partials/footer') %>

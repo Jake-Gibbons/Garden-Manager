@@ -59,10 +59,9 @@
     <section class="panel plant-detail-section">
       <h2>Reference Tools</h2>
       <div class="database-actions">
-        <button type="button" class="btn btn-secondary" id="loadPlantSummary" data-query="<%= plant.scientificName %>">Fetch Wikipedia Summary</button>
+        <a class="btn btn-secondary" href="/plant-database/<%= encodeURIComponent(plant.id) %>/reference">Open Reference Summary Page</a>
         <a class="btn" target="_blank" rel="noreferrer" href="https://www.gbif.org/species/search?q=<%= encodeURIComponent(plant.scientificName) %>">Open GBIF Search</a>
       </div>
-      <div id="plantSummary" class="api-summary hidden" aria-live="polite"></div>
     </section>
 
     <% if (relatedPlants.length > 0) { %>
@@ -83,27 +82,4 @@
     <% } %>
   </div>
 </section>
-
-<script>
-  const loadPlantSummaryButton = document.getElementById('loadPlantSummary');
-  const plantSummary = document.getElementById('plantSummary');
-
-  loadPlantSummaryButton.addEventListener('click', async () => {
-    plantSummary.classList.remove('hidden');
-    plantSummary.textContent = 'Loading summary from Wikipedia...';
-
-    try {
-      const response = await fetch(`/plant-database/api/summary?query=${encodeURIComponent(loadPlantSummaryButton.dataset.query)}`);
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Unable to load summary');
-      }
-
-      plantSummary.textContent = data.summary;
-    } catch (error) {
-      plantSummary.textContent = error.message;
-    }
-  });
-</script>
 <%- include('../partials/footer') %>

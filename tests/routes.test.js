@@ -81,7 +81,25 @@ describe('Routes', () => {
     const res = await request(app).get('/plant-database/acer-palmatum');
     expect(res.status).toBe(200);
     expect(res.text).toContain('Japanese Maple');
-    expect(res.text).toContain('Fetch Wikipedia Summary');
+    expect(res.text).toContain('Open Reference Summary Page');
+  });
+
+  test('GET /plant-database/:id/reference returns dedicated summary page', async () => {
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        query: {
+          pages: {
+            123: { extract: 'Maple summary from API.' }
+          }
+        }
+      })
+    });
+
+    const res = await request(app).get('/plant-database/acer-palmatum/reference');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('Reference Summary');
+    expect(res.text).toContain('Maple summary from API.');
   });
 
   test('GET /plant-database/api/summary returns cached summary payload', async () => {

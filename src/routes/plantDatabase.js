@@ -60,6 +60,31 @@ router.get('/api/summary', async (req, res) => {
   }
 });
 
+router.get('/:id/reference', async (req, res) => {
+  const plant = plantDatabase.find((entry) => entry.id === req.params.id);
+
+  if (!plant) {
+    return res.status(404).send('Plant not found');
+  }
+
+  try {
+    const summaryResult = await fetchWikipediaSummary(plant.scientificName || plant.commonName);
+    return res.render('plant-database/reference', {
+      plant,
+      summary: summaryResult.summary,
+      cached: summaryResult.cached,
+      summaryError: null
+    });
+  } catch (error) {
+    return res.render('plant-database/reference', {
+      plant,
+      summary: null,
+      cached: false,
+      summaryError: error.message
+    });
+  }
+});
+
 router.get('/:id', (req, res) => {
   const plant = plantDatabase.find((entry) => entry.id === req.params.id);
 
