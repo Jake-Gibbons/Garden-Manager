@@ -1,8 +1,8 @@
 <%- include('partials/header') %>
-<section class="page-hero page-hero-home">
-  <p class="eyebrow">Garden OS</p>
-  <h1>Run Your Garden Like A Calm, Clear Workflow</h1>
-  <p class="hero-copy">Map beds, manage each plant profile, and keep daily care visible without getting lost in cluttered screens or giant tables.</p>
+<section class="page-hero animate-in">
+  <p class="eyebrow">🌱 Garden Manager</p>
+  <h1>Your Garden, Beautifully Organised</h1>
+  <p class="hero-copy">Track every plant, plan your beds, and stay on top of watering, feeding, and pruning — all in one calm, clear place.</p>
   <div class="hero-grid">
     <article class="hero-stat-card">
       <p>Tracked plants</p>
@@ -13,50 +13,56 @@
       <strong><%= reminderCount %></strong>
     </article>
     <article class="hero-stat-card">
-      <p>Next best step</p>
+      <p>Next step</p>
       <strong><%= plantCount > 0 ? 'Check reminders' : 'Add first plant' %></strong>
     </article>
   </div>
   <div class="hero-actions">
-    <a class="btn" href="/garden-plan">Open Garden Planner</a>
-    <a class="btn" href="/plants/add">Add a Plant</a>
-    <a class="btn btn-secondary" href="/plants">Open Collection</a>
+    <a class="btn" href="/plants/add">+ Add a Plant</a>
+    <a class="btn btn-secondary" href="/plants">View Collection</a>
+    <a class="btn btn-secondary" href="/plant-database">Browse <%= databaseCount %> Plants</a>
   </div>
 </section>
 
-<section class="cards tri-grid">
+<section class="tri-grid animate-in-delay-1">
   <article class="card workflow-card">
     <p class="eyebrow">01</p>
-    <h2>Design The Space</h2>
-    <p>Draw your garden shape and place markers for growing zones, irrigation, and compost.</p>
-    <a href="/garden-plan">Open Planner</a>
+    <h2>Plan Your Garden</h2>
+    <p>Draw your plot, place plant markers, and map out growing zones with the interactive garden planner.</p>
+    <a href="/garden-plan">Open Planner →</a>
   </article>
 
   <article class="card workflow-card">
     <p class="eyebrow">02</p>
-    <h2>Track Each Plant</h2>
-    <p>Keep species identity, care conditions, toxicity, and notes in one clear collection view.</p>
-    <a href="/plants">Open Plants</a>
+    <h2>Track Every Plant</h2>
+    <p>Build a clear collection of all your plants — from species info and soil preferences to toxicity notes.</p>
+    <a href="/plants">Open Collection →</a>
   </article>
 
   <article class="card workflow-card">
     <p class="eyebrow">03</p>
-    <h2>Work The Schedule</h2>
-    <p>Use reminders as your operational view for watering, feeding, weeding, and pruning.</p>
-    <a href="/reminders">Open Reminders</a>
+    <h2>Stay On Schedule</h2>
+    <p>Smart reminders keep watering, feeding, weeding, and pruning on track — list view or calendar view.</p>
+    <a href="/reminders">Open Reminders →</a>
   </article>
 </section>
 
-<section class="cards dual-grid">
+<section class="dual-grid animate-in-delay-2">
   <article class="card">
-    <h2>Plant Database</h2>
-    <p>Need better taxonomy data before adding a new profile? Use the database to browse and prefill entries quickly.</p>
-    <a href="/plant-database">Browse Plant Database</a>
+    <p class="eyebrow">Reference Library</p>
+    <h2><%= databaseCount %> Plants Ready to Browse</h2>
+    <p>Comprehensive species data for vegetables, herbs, flowers, fruits, trees, shrubs, houseplants, succulents, and more. Tap any plant to prefill your collection instantly.</p>
+    <div style="margin-top:1rem">
+      <a href="/plant-database" class="btn">Browse Plant Database →</a>
+    </div>
   </article>
   <article class="card">
-    <h2>Collection First UX</h2>
-    <p>The collection page is redesigned for scanning, not spreadsheet reading, so decisions take less time.</p>
-    <a href="/plants">See Collection Design</a>
+    <p class="eyebrow">GBIF Lookup</p>
+    <h2>Scientific Name Lookup</h2>
+    <p>Not sure of a plant's full taxonomy? Use the built-in GBIF species search to find accurate genus, family, and scientific names before adding a profile.</p>
+    <div style="margin-top:1rem">
+      <a href="/plants/add" class="btn btn-secondary">Add Plant with Lookup →</a>
+    </div>
   </article>
 </section>
 <%- include('partials/footer') %>
